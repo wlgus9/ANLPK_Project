@@ -24,7 +24,7 @@ def preprocess_article(train_cate_week, cate, date1, date2):
     train_preprocessed = train_cate_week
 
     # 전처리 파일 저장
-    file_name = str('extract0228_0304/Article_Data/preprocessed_article_' + cate + '_' + str(date1) + '_' + str(date2) + '.csv')
+    file_name = str('extract0228_0304/Article_preprocessed/preprocessed_article_' + cate + '_' + str(date1) + '_' + str(date2) + '.csv')
     save_data(train_preprocessed, file_name)
 
     return train_preprocessed

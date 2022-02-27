@@ -5,11 +5,6 @@ import extract0228_0304.article_preprocess as preprocess
 import pandas as pd
 from collections import Counter
 
-# text = "중앙대책본부회의에서는 다음과 같은 결과가 나왔다"
-
-# tagged = tokenizer.pos(text)
-# nouns = [s for s, t in tagged if t in ['NNG']]
-# print(nouns)
 
 ####### 신조어 추출 함수
 def extract_word_list(train_preprocessed, cate, date1, date2, stop_pos, comp_corpus):
