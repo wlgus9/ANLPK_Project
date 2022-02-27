@@ -1,169 +1,120 @@
 import pandas as pd
-import Python.word_extract as word_extract
 from konlpy.tag import Mecab
-import itertools
-import Python.article_preprocess as preprocess
+import extract0228_0304.word_extract as word_extract
+import extract0228_0304.article_preprocess as preprocess
+import time
+import datetime
 
 
-'''##### mecab 사전에 2002-2019 신조어 추가
+def noun_extract_func(file):
+    ### 우리 수집 데이터
+    # 데이터 로드
+    news_data = pd.read_csv(file, encoding='utf-8')
+    train_data = news_data.copy()
+    print(train_data.isnull().sum())
 
-### 기존 사전 불러오기
-with open("C:/mecab/user-dic/nnp.csv", 'r', encoding='utf-8') as f:
-  file_data = f.readlines()
-# file_data
-
-### 2002-2019 신조어 불러오기
-with open("Python/mecab_new_corpus.csv",'r',encoding="cp949") as f:
-  new_corpus = f.readlines()
-len(new_corpus)
-
-### 신조어를 기존 사전 목록에 추가
-for corpus in new_corpus:
-  file_data.append(corpus)
-len(file_data)
-
-### 신조어 추가한 버전으로 사전 업데이트
-with open("C:/mecab/user-dic/nnp.csv", 'w', encoding='utf-8') as f:
-  for line in file_data:
-    f.write(line)
-
-# 추가한 것 확인
-# with open("C:/mecab/user-dic/nnp.csv", 'r', encoding='utf-8') as f:
-#   file_new = f.readlines()
-# file_new
-
-'''
-
-# 데이터 로드
-news_data = pd.read_csv("Python/news_0118~0218.csv", encoding='utf-8')
-train_data = news_data.copy()
-print(train_data.isnull().sum())
-
-def preprocess_article(train_df, cate, date1, date2):
-    file_name = str('Article_Data/preprocessed_article_' + cate + '_' + str(date1) + '_' + str(date2) + '.csv')
+    # 2002-2019 신조어 목록 불러오기
+    mecab_new_corpus = pd.read_csv("mecab_new_corpus.csv",encoding="cp949")
+    mecab_new_corpus.head()
+    new_word_list_pre= list(mecab_new_corpus.단어.unique())
 
     # 데이터 결측치 처리
-    train_data = preprocess.set_data(train_df)
+    train_data = preprocess.set_data(train_data)
+    cate_list = ['사회', '정치', '국제', '경제']
+    date_list = [[20220119, 20220125], [20220126, 20220201], [20220202, 20220208], [20220209, 20220216]]
 
-    # 카테고리별 기간 별 추출
-    train_cate_week = preprocess.split_data_catedate(train_data, cate, date1, date2)
+    stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC','EF']
 
-    # 언론사 리스트 추출
-    sources = preprocess.source_list(train_cate_week)
-
-    # 기사 전처리 함수
-    train_cate_week['article'] = train_cate_week['article'].apply(lambda x : preprocess.preprocessing_text(x, sources))
-
-    # print(new_df['article'][2])
-
-    # 전처리 파일 저장
-    preprocess.save_data(train_cate_week, file_name)
-
-    return train_cate_week
-
-
-
-def extract_word_list(train_df, cate, date1, date2):
-
-    # 입력 파일 전처리
-    train_preprocessed = preprocess_article(train_df, cate, date1, date2)
-
-    print('-------------------------------')
-    print(cate, '분야')
-    print('기간:', date1, '~', date2)
-    print('전체 기사 수 :', len(train_preprocessed))
-    print('-------------------------------')
-
-    #########################################################
-    ################# 고유명사 리스트 추출 ######################
-    proper_nouns = preprocess.extract_proper_nouns(train_preprocessed['article'], 10)
-
-    # soynlp로 추출
-    soy_nouns = word_extract.extract_nouns_soy(train_preprocessed)
-    print('=> 1차 soynlp 추출 명사 수:', len(soy_nouns))
-
-    ## mecab으로 태깅 후 숫자 제거
-    mecab = Mecab(dicpath='C:/mecab/mecab-ko-dic')
-    soy_pos = {i: mecab.pos(noun) for i, noun in enumerate(soy_nouns)}
-
-    # 숫자 태깅 찾아낼 단어인덱스 :  flag 딕셔너리 생성
-    # flag = 1 이면 숫자나 단위 있는 단어를 의미
-    pos_str_dict = {}
-    for i, pos_list in soy_pos.items():
-        pos_str = ""
-        for p in pos_list:
-            pos_str += ' ' + p[1]
-        pos_str_dict[i] = pos_str
-
-    isstop_dict = dict()
-    stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC'] # SN
-    # EC:아닙니다, 그러다, 있었다
-    # SN SL : 숫자+영어단위 1m
-    for i, pos_str in pos_str_dict.items():
-        flag = 0
-        for stop in stop_pos:
-            if pos_str.find(stop) != -1:
-                flag = 1
-        isstop_dict[i] = flag
+    ##### 신조어 후보 추출
+    start = time.time()
+    for cate in cate_list:
+        df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'category', 'date1', 'date2'])
+    # cate = '사회'
+        for date in date_list:
+            # date = [20220119, 20220125]
+            new_word_list_update = new_word_list_pre + list(df_new_words.new_word.unique())
+            # 카테고리별 기간 별 추출
+            train_cate_week = preprocess.split_data_catedate(train_data, cate, date[0], date[1])
+            # 기사 본문 전처리
+            train_processed = preprocess.preprocess_article(train_cate_week, cate, date[0], date[1])
+            # 신조어 추출 후 데이터프레임 반환
+            df_new_words_temp = word_extract.extract_word_list(train_processed, cate, date[0], date[1],
+                                                               stop_pos=stop_pos,
+                                                               comp_corpus=new_word_list_update)
+            df_new_words = df_new_words.append(df_new_words_temp, ignore_index=True)
+        filename = str('extract0228_0304/new_words/new_words_temp_0227_'+cate+'.csv')
+        df_new_words.to_csv(filename, index=False, encoding='utf-8-sig')
+    sec = time.time()-start
+    times = str(datetime.timedelta(seconds=sec)).split(".")
+    times = times[0]
+    print(times)
 
 
-    print('=> 숫자 및 단위 포함 명사 수:', sum(isstop_dict.values()))  # 숫자 및 단위 포함된 단어 : 550
+if __name__ == '__main__':
+    noun_extract_func("Article/news_0118~0218.csv")
 
-    # 숫자가 아닌 인덱스만 추출
-    notnum_ind = [i for i, flag in isstop_dict.items() if flag == 0]
 
-    # 숫자 없는 데이터로 추가
-    soy_nouns_result = [soy_nouns[i] for i in notnum_ind]  # 숫자 단위 제외 단어 : 5742
-    print('=> 최종 soynlp 추출 명사 수:', len(soy_nouns_result))
 
-    # mecab으로 형태소 분석
-    mecab_nouns = word_extract.extract_nouns_mecab(train_preprocessed)
+'''## 수석님이 주신 데이터
+news_data2_o = pd.read_csv("Article/articles.csv", encoding='utf-8')
+news_data2 = news_data2_o[['article', 'category', 'date', 'source', 'title', 'url']]
+train_data2 = news_data2.copy()
 
-    # 우선 첫주는 전체 mecab 단어목록과 비교해야 하니까 기사 단위로 분리x --> 전체 문서로 합쳐버리기
-    mecab_nouns_all = set(list(itertools.chain(*mecab_nouns)))
-    print('=> mecab 추출 명사 수:', len(mecab_nouns_all))
+# 결측치 처리
+train_data2.dropna(inplace=True)
+print(train_data2.isnull().sum())
+# len(news_data2), len(train_data2)
 
-    # mecab 결과와 soynlp 결과 비교 후 신조어 후보 추출
-    new_word_list = [noun for noun in soy_nouns_result if noun not in mecab_nouns_all]
-    print("=> 신조어 후보 개수:", len(new_word_list))
-    print('--------------------------------------------------------')
+# category date 확인
+sorted(train_data2.category.unique())
+sorted(train_data2.date.unique().astype(int))
 
-    # 단어 후보 csv저장
-    # df_new_words = pd.DataFrame(new_word_list, columns=['new_word'])
-    # df_new_words.to_csv(file_path, index=False, encoding='utf-8-sig')
+# cate date 지정
+cate_list2 = sorted(train_data2.category.unique())
+date_list2 = [[20220101, 20220107], [20220108, 20220114], [20220115, 20220121]]
+df_new_words2 = pd.DataFrame(columns = ['new_word', 'category','date1','date2' ])
 
-    return new_word_list
+# path = './Article_Data/'
+# file_list = os.listdir(path)
+# file_list_py = [file for file in file_list if (file.endswith('.csv'))]  ## 파일명 끝이 .csv인 경우
 
-cate_list = ['사회', '정치', '국제', '경제']
-date_list = [[20220119, 20220125], [20220126, 20220201], [20220202, 20220208], [20220209, 20220216]]
-df_new_words = pd.DataFrame(columns = ['new_word', 'category','date1','date2' ])
+# ent_df = preprocess.split_data_catedate(train_data2, 'entertainment', 20220115, 20220121)
 
 new_words_cnt = 0
-for cate in cate_list:
-    for date in date_list:
-        new_word_list = extract_word_list(train_data, cate, date[0], date[1])
-        for new_word in new_word_list:
-            new_word_row = pd.Series([new_word, cate, date[0], date[1]], index=df_new_words.columns)
-            df_new_words = df_new_words.append(new_word_row, ignore_index=True)
-        new_words_cnt += len(new_word_list)
+for cate in cate_list2:
+    for date in date_list2:
+        df_cate_week = preprocess.split_data_catedate(train_data2, cate, date[0], date[1])
+        if len(df_cate_week) == 0 : # 분할한 데이터 프레임이 길이가 0인지 확인
+            break
+        else: # 비어있지 않은 데이터 프레임만 전처리 -> 명사 추출
+            train_processed2 = preprocess_article(df_cate_week, cate, date[0], date[1])  # 일단 데이터 분할
+            new_word_list = extract_word_list(train_processed2, cate, date[0], date[1])
+            for new_word in new_word_list:
+                new_word_row = pd.Series([new_word, cate, date[0], date[1]], index=df_new_words2.columns)
+                df_new_words2 = df_new_words2.append(new_word_row, ignore_index=True)
+            new_words_cnt += len(new_word_list)
 print(new_words_cnt)
-df_new_words.to_csv('new_words_temp_0224_num_ver3.csv', index=False, encoding='utf-8-sig')
+df_new_words2.to_csv('new_words_temp_0224_num_ver3.csv', index=False, encoding='utf-8-sig')
+
+'''
+
 
 
 '''
-a=['감사하다','구체적', '1월31일']
+a={'감사하다':1, '구체적':50, '1월31일':16}
 mecab = Mecab(dicpath='C:/mecab/mecab-ko-dic')
-pos = {i: mecab.pos(noun) for i, noun in enumerate(a)}
+pos = {i: mecab.pos(noun) for i, noun in enumerate(list(a.keys()))}
+pos = {noun: mecab.pos(noun) for noun in list(a.keys())}
 pos
 # 숫자 태깅 찾아낼 단어인덱스 :  flag 딕셔너리 생성
 # flag = 1 이면 숫자나 단위 있는 단어를 의미
 
 posdict = {}
-for i, pos_list in pos.items():
+for noun, pos_list in pos.items():
     pos_str = ""
     for p in pos_list:
         pos_str += ' ' + p[1]
-    posdict[i] = pos_str
+    posdict[noun] = pos_str
 posdict
 
 isnum = dict()
@@ -178,10 +129,11 @@ for i, posstr in posdict.items():
 print('=> 숫자 및 단위 포함 명사 수:', sum(isnum.values()))  # 숫자 및 단위 포함된 단어 : 550
 
 # 숫자가 아닌 인덱스만 추출
-ind = [i for i, flag in isnum.items() if flag == 0]
+# ind = [i for i, flag in isnum.items() if flag == 0]
 
 # 숫자 없는 데이터로 추가
-a_result = [a[i] for i in ind]  # 숫자 단위 제외 단어 : 5742
+a_result = {noun: a[noun] for noun, flag in isnum.items() if flag == 0}  # 숫자 단위 제외 단어 : 5742
 print(a_result)
 # print('=> 최종 soynlp 추출 명사 수:', len(soy_nouns_result))
+
 '''
