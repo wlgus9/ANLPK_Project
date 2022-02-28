@@ -448,7 +448,7 @@ window.onload = function () {
 
 					<div class="row">
 
-						<!-- Area Chart -->
+						<!-- Pareto Chart -->
 						<div class="col-xl-8 col-lg-7">
 							<div class="card shadow mb-4">
 								<!-- Card Header - Dropdown -->
@@ -475,9 +475,8 @@ window.onload = function () {
 								<!-- Card Body -->
 								<div class="card-body">
 									<div class="chart-area">										
-										<div id="chartdiv">
-										<input type="hidden" value="${weekCount}" id="week">
-										</div> 
+										<div id="chartdiv"></div> 
+											<input type="hidden" value='${weekCount}' id="week">
 									</div>
 								</div>
 							</div>
@@ -1421,6 +1420,9 @@ window.onload = function () {
 			</div>
 		</div>
 	</div>
+	
+	<!-- toJSON -->
+	
 	
 	<!-- Bootstrap core JavaScript-->
 	<script src="vendor/jquery/jquery.min.js"></script>

@@ -1,9 +1,7 @@
 function test() {
 
-	var weekData = document.getElementById("week")
-
-	console.log(weekData);
-	console.log("test()")
+	var weekData = JSON.parse(document.getElementById("week").value);
+	
 	am5.ready(function() {
 
 		// Create root element
@@ -38,13 +36,13 @@ function test() {
 			var total = 0;
 
 			for (var i = 0; i < data.length; i++) {
-				var value = data[i].visits;
+				var value = data[i].count;
 				total += value;
 			}
 
 			var sum = 0;
 			for (var i = 0; i < data.length; i++) {
-				var value = data[i].visits;
+				var value = data[i].count;
 				sum += value;
 				data[i].pareto = sum / total * 100;
 			}

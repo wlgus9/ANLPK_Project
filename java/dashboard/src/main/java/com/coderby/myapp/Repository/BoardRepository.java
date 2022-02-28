@@ -109,7 +109,7 @@ public class BoardRepository implements IBoardRepository {
 			doc = cursor.next();
 			week.add(doc.toJson());
 		}
-
+		
 		return week;
 	}	
 	
