@@ -17,10 +17,10 @@ public class BoardController {
 	@Autowired
 	IBoardService boardService;
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public String home(Model model) {
 		
-		System.out.println("controller ===========");
+/*		System.out.println("controller ===========");
 		
 		long totalData = boardService.totalData();		
 		model.addAttribute("totalData", totalData);
@@ -30,8 +30,10 @@ public class BoardController {
 		model.addAttribute("max", dateRange.get("max"));
 		
 		Map<String, Object> map = boardService.category();
-		model.addAttribute("map", map);
-		return "index";
+		model.addAttribute("map", map);*/
+		
+		
+		return "test";
 	}
 	
 }
