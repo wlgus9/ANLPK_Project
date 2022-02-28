@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.coderby.myapp.Service.IBoardService;
-import com.mongodb.util.JSON;
 
 @Controller
 public class BoardController {
@@ -24,21 +23,25 @@ public class BoardController {
 		
 		System.out.println("controller ===========");
 		
-		
+		// 총 기사 개수 
 		long totalData = boardService.totalData();		
 		model.addAttribute("totalData", totalData);
 		
+		// 데이터 수집 기간 
 		Document dateRange = boardService.dateRange();
 		model.addAttribute("min", dateRange.get("min"));
 		model.addAttribute("max", dateRange.get("max"));
 		
+		// 카테고리별 분포 
 		Map<String, Object> map = boardService.category();
 		model.addAttribute("map", map);
 		
+		// 기사 수집 추이 
 		List<String> week = boardService.weekCount();
 		model.addAttribute("weekCount", week);
 		
 		return "index";
 	}
+
 	
 }
