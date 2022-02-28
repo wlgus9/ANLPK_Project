@@ -25,6 +25,21 @@
 <!-- Custom styles for this template-->
 <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+</style>
+
+<!-- Resources -->
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+
+
 </head>
 
 <body id="page-top">
@@ -324,12 +339,7 @@
 					<div
 						class="d-sm-flex align-items-center justify-content-between mb-4">
 						<h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-						
-							<button type="button" onclick=test() 
-								class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-								class="fas fa-download fa-sm text-white-50"></i> Generate Report
-							</button>
-
+						<button type="button" onclick=test()>Generate Report</button>					 
 					</div>
 
 					<!-- Content Row -->
@@ -454,8 +464,9 @@
 								</div>
 								<!-- Card Body -->
 								<div class="card-body">
-									<div class="chart-bar">
-										<canvas id="chartdiv"></canvas>
+									<div class="chart-area">
+										<canvas id="myAreaChart"></canvas>
+										<!-- <div id="chartdiv"></div> -->
 									</div>
 								</div>
 							</div>
@@ -498,6 +509,9 @@
 					</div>
 				</div>
 				<p>
+				
+				<div id="chartdiv"></div>
+				
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
@@ -791,7 +805,7 @@
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                                        <canvas id="myAreaChart" style="display: block; width: 414px; height: 320px;" width="414" height="320" class="chartjs-render-monitor"></canvas>
+                                       	<canvas id="myAreaChart" style="display: block; width: 414px; height: 320px;" width="414" height="320" class="chartjs-render-monitor"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -1415,10 +1429,9 @@
 	<script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 	<!-- Page level custom scripts -->
-	<script src="js/demo/paretoChart.js"></script>
 	<script src="js/demo/chart-area-demo.js"></script>
 	<script src="js/demo/chart-pie-demo.js"></script>
-	<script src="js/demo/chart-bar-demo.js"></script>
+	<script src="js/demo/chart-pareto.js"></script>
 	<script src="js/demo/datatables-demo.js"></script>
 
 </body>
