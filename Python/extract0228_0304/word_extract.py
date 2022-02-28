@@ -7,13 +7,19 @@ from collections import Counter
 
 
 ####### 신조어 추출 함수
-def extract_word_list(train_preprocessed, cate, date1, date2, stop_pos, comp_corpus):
-  # # 입력 파일 전처리
-  # train_preprocessed = preprocess_article(train_df, cate, date1, date2)
+def extract_word_list_week(train_preprocessed, cate, week, stop_pos, comp_corpus):
+  """
+   지정한 카테고리와 주에 따라 신조어 목록 추출
+   train_preprocessed : 전처리 한 데이터 프레임(dataframe), cate : 카테고리(str), week : 주(int),
+   stop_pos : 명사 제외할 pos 태깅, comp_corpus : 비교할 이전 기간 신조어 목록
+   return : dataframe
+  """
+  date1 = min(train_preprocessed.date)
+  date2 = max(train_preprocessed.date)
 
   print('-------------------------------')
   print(cate, '분야')
-  print('기간:', date1, '~', date2)
+  print('기간:', week, ',', date1, '~', date2)
   print('전체 기사 수 :', len(train_preprocessed))
   print('-------------------------------')
 
@@ -32,29 +38,26 @@ def extract_word_list(train_preprocessed, cate, date1, date2, stop_pos, comp_cor
   new_word_dict = {soy_noun : freq for soy_noun, freq in soy_nouns_freq.items() if soy_noun not in mecab_nouns_freq.keys()}
   print("=> 신조어 후보 개수:", len(new_word_dict))
 
-  # 고유명사 추가
-  proper_nouns_dict = preprocess.extract_proper_nouns(train_preprocessed['article'], 10)
+  # 전체 문서에서 빈도가 높은 고유명사와 빈도수 추출
+  proper_nouns_all = list(itertools.chain(*train_preprocessed['proper_nouns']))
+  proper_nouns_freq = Counter(proper_nouns_all)
+  proper_nouns_dict = { proper : freq for proper, freq in proper_nouns_freq.items() if freq >= 10 }
   print("=> 고유명사 수 :", len(proper_nouns_dict))
   new_word_dict.update(proper_nouns_dict)
 
   # 이전의 신조어 후보와 비교 후 포함되지 않은것만 추출
   new_words_cnt = 0
-  df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'category', 'date1', 'date2'])
+  df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'category', 'week', 'date1', 'date2'])
 
   for new_word, freq in new_word_dict.items():
     # 이전 신조어 리스트와 비교 후 걸러내기
     if new_word not in comp_corpus:
       # 추출 단어 데이터 프레임화
-      new_word_row = pd.Series([new_word, freq, cate, date1, date2], index=df_new_words.columns)
+      new_word_row = pd.Series([new_word, freq, cate, week, date1, date2], index=df_new_words.columns)
       df_new_words = df_new_words.append(new_word_row, ignore_index=True)
       new_words_cnt += 1
   print('>>>>>>>> 최종 신조어 후보 :', new_words_cnt,'<<<<<<<<')
-
   print('--------------------------------------------------------')
-
-  # 단어 후보 csv저장
-  # df_new_words = pd.DataFrame(new_word_list, columns=['new_word'])
-  # df_new_words.to_csv(file_path, index=False, encoding='utf-8-sig')
 
   return df_new_words
 
@@ -96,16 +99,13 @@ def extract_nouns_freq_soy(df, stop_pos):
   # 단어인덱스 :  flag 딕셔너리 생성
   # flag = 1 이면 stop_pos 단어에 해당
   isstop_dict = dict()
-
   for noun, pos_str in pos_str_dict.items():
     flag = 0
     for stop in stop_pos:
       if pos_str.find(stop) != -1:
         flag = 1
     isstop_dict[noun] = flag
-
   print('=> stop_pos 포함 명사 수:', sum(isstop_dict.values()))
-
 
   # stop_pos 없는 데이터로 추가
   soy_nouns_result = {noun : soy_nouns_freq[noun] for noun, flag in isstop_dict.items() if flag == 0}
