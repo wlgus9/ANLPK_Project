@@ -28,8 +28,11 @@
 <!-- Styles -->
 <style>
 #chartdiv {
+  position: relative;
+  height: 330px;
   width: 100%;
-  height: 500px;
+  @include media-breakpoint-up(md) {
+    height: 330px;
 }
 </style>
 
@@ -38,7 +41,14 @@
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 
+<script type="text/javascript">
 
+window.onload = function () {
+	
+	test();
+}
+
+</script>
 
 </head>
 
@@ -339,7 +349,7 @@
 					<div
 						class="d-sm-flex align-items-center justify-content-between mb-4">
 						<h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-						<button type="button" onclick=test()>Generate Report</button>					 
+						<a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>			
 					</div>
 
 					<!-- Content Row -->
@@ -464,9 +474,10 @@
 								</div>
 								<!-- Card Body -->
 								<div class="card-body">
-									<div class="chart-area">
-										<canvas id="myAreaChart"></canvas>
-										<!-- <div id="chartdiv"></div> -->
+									<div class="chart-area">										
+										<div id="chartdiv">
+										<input type="hidden" value="${weekCount}" id="week">
+										</div> 
 									</div>
 								</div>
 							</div>
@@ -509,8 +520,7 @@
 					</div>
 				</div>
 				<p>
-				
-				<div id="chartdiv"></div>
+	
 				
                 <!-- Begin Page Content -->
                 <div class="container-fluid">

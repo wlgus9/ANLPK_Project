@@ -1,5 +1,7 @@
 package com.coderby.myapp.Repository;
 
+import static com.mongodb.client.model.Sorts.ascending;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -86,6 +88,29 @@ public class BoardRepository implements IBoardRepository {
 		
 		
 		return map;
+	}
+
+	@Override
+	public List<String> weekCount() {
+		AggregateIterable<Document> weekCount = col.aggregate(
+				Arrays.asList(
+				          Aggregates.group("$week", Accumulators.sum("count", 1)),
+				          Aggregates.sort(ascending("_id"))
+				  )
+				);
+		
+		MongoCursor<Document> cursor = weekCount.cursor();
+
+		Document doc = new Document();		
+
+		List<String> week = new ArrayList<String>();
+		
+		while (cursor.hasNext()) {
+			doc = cursor.next();
+			week.add(doc.toJson());
+		}
+
+		return week;
 	}	
 	
 	

@@ -1,5 +1,6 @@
 package com.coderby.myapp.Controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.coderby.myapp.Service.IBoardService;
+import com.mongodb.util.JSON;
 
 @Controller
 public class BoardController {
@@ -17,10 +19,11 @@ public class BoardController {
 	@Autowired
 	IBoardService boardService;
 
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Model model) {
 		
-/*		System.out.println("controller ===========");
+		System.out.println("controller ===========");
+		
 		
 		long totalData = boardService.totalData();		
 		model.addAttribute("totalData", totalData);
@@ -30,10 +33,12 @@ public class BoardController {
 		model.addAttribute("max", dateRange.get("max"));
 		
 		Map<String, Object> map = boardService.category();
-		model.addAttribute("map", map);*/
+		model.addAttribute("map", map);
 		
+		List<String> week = boardService.weekCount();
+		model.addAttribute("weekCount", week);
 		
-		return "test";
+		return "index";
 	}
 	
 }

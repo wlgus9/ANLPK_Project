@@ -1,5 +1,6 @@
 package com.coderby.myapp.Service;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
@@ -37,6 +38,14 @@ public class BoardService implements IBoardService {
 		Map<String, Object> category = boardRepository.category();
 		
 		return category;
+	}
+
+	@Override
+	public List<String> weekCount() {
+		
+		List<String> weekCount = boardRepository.weekCount();
+		
+		return weekCount;
 	}
 
 }
