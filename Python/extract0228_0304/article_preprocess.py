@@ -12,24 +12,31 @@ import re
 from collections import Counter
 
 ###### 기사 전처리 함수
-def preprocess_article(train_cate_week, cate, date1, date2):
+def preprocess_article(df):
+    """
+     기사 데이터 본문 전처리 및 고유명사 리스트 컬럼 추가
+     df : 데이터프레임,
+     return : 본문전처리 + 고유명사 컬럼 데이터프레임
 
+    """
     # 언론사 리스트 추출
-    sources = source_list(train_cate_week)
+    sources = source_list(df)
+
+    # 고유 명사 추출 -> 고유명사 컬럼에 추가
+    df['proper_nouns'] = df['article']
+    df['proper_nouns'] = df['proper_nouns'].apply(lambda x: extract_proper_nouns(x))
 
     # 기사 전처리 함수
-    train_cate_week['article'] = train_cate_week['article'].apply(lambda x : preprocessing_text(x, sources))
+    df['article'] = df['article'].apply(lambda x : preprocessing_text(x, sources))
     # print(new_df['article'][2])
 
-    train_preprocessed = train_cate_week
+    train_preprocessed = df
 
     # 전처리 파일 저장
-    file_name = str('extract0228_0304/Article_preprocessed/preprocessed_article_' + cate + '_' + str(date1) + '_' + str(date2) + '.csv')
-    save_data(train_preprocessed, file_name)
+    # file_name = str('extract0228_0304/Article_preprocessed/preprocessed_article_' + cate + '_' + str(date1) + '_' + str(date2) + '.csv')
+    # save_data(train_preprocessed, file_name)
 
     return train_preprocessed
-
-
 
 
 # 전처리할 데이터 불러오기 및 결측치 처리
@@ -39,29 +46,24 @@ def set_data(df):
     return df
 
 
-
-# 기사 카테고리 기간 별로 분리
-def split_data_catedate(df, cate, date1, date2):
-  """
-    카테고리와 지정 데이터로 데이터 분할
-    cate : str, date1&2 : int
-  """
-  train_cate = df[df['category']==cate]
-  train_catedate = train_cate.loc[(train_cate.date >= date1)&(train_cate.date <= date2)]
-  # train_cate_n_date = train_cate.loc[(train_cate.date >= date1) & (train_cate.date <= date2)]['article']
-  return train_catedate
+# 카테고리 리스트
+def category_list(df):
+    df_new = df.drop_duplicates(subset="category")
+    cate_list = sorted(df_new['category'].astype(str))
+    return cate_list
 
 
-'''
-# 카테고리별로 데이터 분리하기
-def split_category(df):
-    train_society = df[df['category']=='사회']
-    train_politic = df[df['category']=='정치']
-    train_international = df[df['category']=='국제']
-    train_economy = df[df['category']=='경제']    
+# (전체 기사 전처리 후) 기사 카테고리 별로 분리
+def split_data_cate(df, version, path):
+    """
+    데이터 카테고리별로 분리 및 저장
+    df : pandas.Dataframe , version : int
+    """
+    cate_list = category_list(df)
+    for category in cate_list:
+        df_cate = df[df['category'] == category]
+        save_data(df_cate, path + '/preprocessed_' + category + '_V' + str(version) + '.csv')
 
-    return train_society, train_politic, train_international, train_economy
-'''
 
 # 언론사 리스트 추출
 def source_list(df):
@@ -70,34 +72,35 @@ def source_list(df):
     return source
 
 
-def extract_proper_nouns(df_article, frequency):
-    """
-    ''안의 고유명사 리스트 추출(+ 각 문서별 중복 고유명사 제거)
-    전체 문서에서 해당 고유명사의 빈도수(매개변수 frequency) 이상 등장한 고유명사만 리스트로 저장
+# 고유명사 추출
+def extract_proper_nouns(docs):
+  """
+  ''안의 고유명사 리스트 추출(+ 각 문서내 중복 고유명사 제거)
 
-    :param df_article: 데이터 프레임 내 기사
-    :param frequency: 고유명사 최소 등장 횟수
-    :return: 추출한 고유명사, 빈도 딕셔너리
-    """
-    
-    proper_nouns = []
-    sum=0
-    for docs in df_article:
-        proper_noun = re.findall('‘[A-Za-z0-9가-힣 ]+’', str(docs))
-        sum += len(proper_noun)
-        proper_noun = set(proper_noun)
-        proper_noun = list(proper_noun)
-        for word in proper_noun:
-            no_space_proper_noun = word.replace(' ','').replace('‘','').replace('’','')
-            proper_nouns.append(no_space_proper_noun)
+  :param df_article: ※※전처리 전※※ 데이터 프레임 내 기사
+  :return: 추출한 고유명사
+  """
 
-    f_proper_nouns_dict = dict()
-    result = Counter(proper_nouns)
-    for key, value in result.items():
-	    if value >= frequency:
-		    f_proper_nouns_dict[key] = value
+  proper_nouns = []
+  # sum=0
+  # for docs in df_article:
+  proper_noun = re.findall("'[A-Za-z0-9가-힣 ]+'", str(docs))
+  proper_noun = proper_noun + re.findall('‘[A-Za-z0-9가-힣 ]+’', str(docs))
 
-    return f_proper_nouns_dict
+  # sum += len(proper_noun)
+  proper_noun = set(proper_noun)
+  proper_noun = list(proper_noun)
+  proper_nouns = [word.replace(' ', '').replace('‘', '').replace('’', '').replace("'", '') for word in proper_noun]
+  # proper_nouns.append(no_space_proper_noun)
+
+  # f_proper_nouns_dict = dict()
+  # result = Counter(proper_nouns)
+  # for key, value in result.items():
+  #   if value >= frequency:
+  #     f_proper_nouns_dict[key] = value
+
+  return proper_nouns
+
 
 
 

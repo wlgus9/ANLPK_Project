@@ -4,105 +4,105 @@ import extract0228_0304.word_extract as word_extract
 import extract0228_0304.article_preprocess as preprocess
 import time
 import datetime
+import os
 
+######## 전처리 데이터 준비 #######
 
-def noun_extract_func(file):
-    ### 우리 수집 데이터
+def create_preprocessed_data(raw_data, ver, path = "extract0228_0304/Article_preprocessed"):
+    """
+     전처리 데이터를 생성하여 지정한 경로에 저장하는 함수
+     raw_data : 원본데이터 파일, path : 저장 위치
+    """
     # 데이터 로드
-    news_data = pd.read_csv(file, encoding='utf-8')
-    train_data = news_data.copy()
-    print(train_data.isnull().sum())
+    df=pd.read_csv(raw_data, encoding='utf-8')
+
+    # 결측치 처리
+    df.dropna(inplace=True)
+
+    # 카테고리 목록
+    cate_list = preprocess.category_list(df)
+
+    # 전처리 후 전처리 파일을 카테고리 별로 저장 (※기사별 고유명사 컬럼이 추가됌)
+    train_preprocessed = preprocess.preprocess_article(df)
+
+    # 전처리 된 데이터 카테고리 별로 분리하여 저장
+    preprocess.split_data_cate(train_preprocessed,ver,path)
+
+
+    return cate_list
+
+
+def noun_extract_func(cate, version, file_name):
+    """
+     카테고리별 신조어 목록 csv 저장하는 함수
+     cate : 카테고리(str), version : 전처리 버전 (int), filename : 저장 경로
+     return : unique한 카테고리 목록 ( 신조어 추출에 사용 )
+    """
+
+    # 전처리 파일 전체 리스트 가져오기
+    # path = 'extract0228_0304/Article_preprocessed'
+    path = 'extract0228_0304/Article_preprocessed'  # 전처리 파일 저장 경로
+    file_list = os.listdir(path)  # 전체 파일 목록
+
+    ##### 카테고리 별 전처리 파일 목록에서 불러오기
+    for file in file_list:  # 파일 목록 중에
+        if (cate in file) & ("V" + str(version) in file):  # 카테고리 및 버전에 따른 파일 이름 선택해서 불러오기
+            df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'category', 'week', 'date1', 'date2'])
+            train_processed = pd.read_csv(str(path + '/' + file), encoding='utf-8-sig')
+    ## 결측치 처리
+    train_processed.dropna(inplace=True)
+
+    # week를 리스트로 저장
+    weeklist = list(train_processed.week.unique())
 
     # 2002-2019 신조어 목록 불러오기
     mecab_new_corpus = pd.read_csv("mecab_new_corpus.csv",encoding="cp949")
-    mecab_new_corpus.head()
     new_word_list_pre= list(mecab_new_corpus.단어.unique())
 
-    # 데이터 결측치 처리
-    train_data = preprocess.set_data(train_data)
-    cate_list = ['사회', '정치', '국제', '경제']
-    date_list = [[20220119, 20220125], [20220126, 20220201], [20220202, 20220208], [20220209, 20220216]]
+    # 명사 제외할 pos 태깅
+    stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC','EF','VV'] # XSA- ~한, ETM- ~한, JX-까지
 
-    stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC','EF']
 
-    ##### 신조어 후보 추출
-    start = time.time()
-    for cate in cate_list:
-        df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'category', 'date1', 'date2'])
-    # cate = '사회'
-        for date in date_list:
-            # date = [20220119, 20220125]
-            new_word_list_update = new_word_list_pre + list(df_new_words.new_word.unique())
-            # 카테고리별 기간 별 추출
-            train_cate_week = preprocess.split_data_catedate(train_data, cate, date[0], date[1])
-            # 기사 본문 전처리
-            train_processed = preprocess.preprocess_article(train_cate_week, cate, date[0], date[1])
-            # 신조어 추출 후 데이터프레임 반환
-            df_new_words_temp = word_extract.extract_word_list(train_processed, cate, date[0], date[1],
-                                                               stop_pos=stop_pos,
-                                                               comp_corpus=new_word_list_update)
-            df_new_words = df_new_words.append(df_new_words_temp, ignore_index=True)
-        filename = str('extract0228_0304/new_words/new_words_temp_0227_'+cate+'.csv')
-        df_new_words.to_csv(filename, index=False, encoding='utf-8-sig')
-    sec = time.time()-start
-    times = str(datetime.timedelta(seconds=sec)).split(".")
-    times = times[0]
-    print(times)
+    ## 주별로 신조어 추출 후 비교한 결과를 저장
+    for week in weeklist:
+        new_word_list_update = new_word_list_pre + list(df_new_words.new_word.unique())
+        train_processed_week = train_processed[train_processed.week == week]
+        # 주별 신조어 추출
+        df_new_words_temp = word_extract.extract_word_list_week(train_processed_week, cate, week,
+                                                           stop_pos=stop_pos,
+                                                           comp_corpus=new_word_list_update)
+        df_new_words = df_new_words.append(df_new_words_temp, ignore_index=True)
+
+    df_new_words.to_csv(file_name, index=False, encoding='utf-8-sig')
 
 
 if __name__ == '__main__':
-    noun_extract_func("Article/news_0118~0218.csv")
 
+    # cate_list = ['사회', '정치', '경제', '국제', '문화', '연예', '스포츠', 'IT', '사설칼럼', '보도자료']
+    cate_list = create_preprocessed_data("Article/2022년1월다음뉴스_주차별정리.csv", 1)
 
+    start = time.time()
+    ## 카테고리 여러개 지정해서 여러개 신조어 파일 얻을때
+    # for cate in cate_list:
+    #     filename = str('Article_preprocessed/new_words_temp_0228_' + cate + '.csv')
+    #     noun_extract_func(cate, 1, file_name=file_name)
 
-'''## 수석님이 주신 데이터
-news_data2_o = pd.read_csv("Article/articles.csv", encoding='utf-8')
-news_data2 = news_data2_o[['article', 'category', 'date', 'source', 'title', 'url']]
-train_data2 = news_data2.copy()
+    ## 카테고리 하나 정해서 신조어 파일 하나 얻을때
+    file_name = str('extract0228_0304/new_words/new_words_temp_0228_경제.csv')
+    noun_extract_func("경제", 1, file_name=file_name)
+    sec = time.time() - start
+    times = str(datetime.timedelta(seconds=sec)).split(".")
+    times = times[0]
+    print(times) # 실행 시간 출력
 
-# 결측치 처리
-train_data2.dropna(inplace=True)
-print(train_data2.isnull().sum())
-# len(news_data2), len(train_data2)
-
-# category date 확인
-sorted(train_data2.category.unique())
-sorted(train_data2.date.unique().astype(int))
-
-# cate date 지정
-cate_list2 = sorted(train_data2.category.unique())
-date_list2 = [[20220101, 20220107], [20220108, 20220114], [20220115, 20220121]]
-df_new_words2 = pd.DataFrame(columns = ['new_word', 'category','date1','date2' ])
-
-# path = './Article_Data/'
-# file_list = os.listdir(path)
-# file_list_py = [file for file in file_list if (file.endswith('.csv'))]  ## 파일명 끝이 .csv인 경우
-
-# ent_df = preprocess.split_data_catedate(train_data2, 'entertainment', 20220115, 20220121)
-
-new_words_cnt = 0
-for cate in cate_list2:
-    for date in date_list2:
-        df_cate_week = preprocess.split_data_catedate(train_data2, cate, date[0], date[1])
-        if len(df_cate_week) == 0 : # 분할한 데이터 프레임이 길이가 0인지 확인
-            break
-        else: # 비어있지 않은 데이터 프레임만 전처리 -> 명사 추출
-            train_processed2 = preprocess_article(df_cate_week, cate, date[0], date[1])  # 일단 데이터 분할
-            new_word_list = extract_word_list(train_processed2, cate, date[0], date[1])
-            for new_word in new_word_list:
-                new_word_row = pd.Series([new_word, cate, date[0], date[1]], index=df_new_words2.columns)
-                df_new_words2 = df_new_words2.append(new_word_row, ignore_index=True)
-            new_words_cnt += len(new_word_list)
-print(new_words_cnt)
-df_new_words2.to_csv('new_words_temp_0224_num_ver3.csv', index=False, encoding='utf-8-sig')
-
-'''
 
 
 
 '''
-a={'감사하다':1, '구체적':50, '1월31일':16}
+from konlpy.tag import Mecab
 mecab = Mecab(dicpath='C:/mecab/mecab-ko-dic')
+a={'감사하다':1, '구체적':50, '1월31일':16}
+
 pos = {i: mecab.pos(noun) for i, noun in enumerate(list(a.keys()))}
 pos = {noun: mecab.pos(noun) for noun in list(a.keys())}
 pos
@@ -135,5 +135,9 @@ print('=> 숫자 및 단위 포함 명사 수:', sum(isnum.values()))  # 숫자 
 a_result = {noun: a[noun] for noun, flag in isnum.items() if flag == 0}  # 숫자 단위 제외 단어 : 5742
 print(a_result)
 # print('=> 최종 soynlp 추출 명사 수:', len(soy_nouns_result))
+
+news_data2_o = pd.read_csv("Article/articles.csv", encoding='utf-8')
+news_data2 = news_data2_o[['article', 'category', 'date', 'source', 'title', 'url']]
+train_data2 = news_data2.copy()
 
 '''
