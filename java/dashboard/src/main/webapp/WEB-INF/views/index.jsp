@@ -402,17 +402,10 @@ window.onload = function () {
 										<div class="col mr-2">
 											<div
 												class="text-xs font-weight-bold text-info text-uppercase mb-1">빈도수
-												TOP1</div>
+												TOP1 카테고리</div>
 											<div class="row no-gutters align-items-center">
 												<div class="col-auto">
-													<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-												</div>
-												<div class="col">
-													<div class="progress progress-sm mr-2">
-														<div class="progress-bar bg-info" role="progressbar"
-															style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-															aria-valuemax="100"></div>
-													</div>
+													<div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">${freq.cate}</div>
 												</div>
 											</div>
 										</div>
@@ -432,8 +425,8 @@ window.onload = function () {
 										<div class="col mr-2">
 											<div
 												class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-												이번 주에 추출된 신조어 개수</div>
-											<div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+												빈도수 TOP1 언론사</div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">${freq.source}</div>
 										</div>
 										<div class="col-auto">
 											<i class="fas fa-comments fa-2x text-gray-300"></i>
@@ -510,8 +503,8 @@ window.onload = function () {
 								<div class="card-body">
 									<div class="chart-pie pt-4 pb-2">
 										<canvas id="myPieChart"></canvas>
-								        <input type="hidden" value="${map.label}" id="label">
-								        <input type="hidden" value="${map.count}" id="count">
+								        <input type="hidden" value='${map.label}' id="label">
+								        <input type="hidden" value='${map.count}' id="count">
 									</div>
 								</div>
 							</div>

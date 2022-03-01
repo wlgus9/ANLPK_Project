@@ -5,11 +5,16 @@ Chart.defaults.global.defaultFontColor = '#858796';
 
 // Pie Chart Example
 var ctx = document.getElementById("myPieChart");
+
 var labelData = document.getElementById("label").value.split('[').join('').split(']').join('');
 var labels = labelData.toString().split(",");
 
 var countData = document.getElementById("count").value.split('[').join('').split(']').join('');
 var counts = countData.toString().split(",");
+
+
+//var labels = JSON.parse(document.getElementById("label").value);
+//var counts = JSON.parse(document.getElementById("count").value);
 
 console.log(labels);
 console.log(labels.length);
@@ -24,7 +29,7 @@ var myPieChart = new Chart(ctx, {
     datasets: [{
       data: counts,
       backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e','#6610f2','#5a5c69','#fd7e14','#e83e8c','#6f42c1','#20c9a6'],
-      hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#858796'],
+      hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#ffb700'],
       hoverBorderColor: "rgba(234, 236, 244, 1)",
     }],
     labels: labels,

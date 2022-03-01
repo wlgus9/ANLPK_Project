@@ -48,4 +48,12 @@ public class BoardService implements IBoardService {
 		return weekCount;
 	}
 
+	@Override
+	public Map<String, Object> freq() {
+		
+		Map<String, Object> freq = boardRepository.freq();
+		
+		return freq;
+	}
+
 }

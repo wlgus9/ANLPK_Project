@@ -9,5 +9,6 @@ public interface IBoardService {
 	long totalData();
 	Document dateRange();
 	Map<String, Object> category();
+	Map<String, Object> freq();
 	List<String> weekCount();
 }

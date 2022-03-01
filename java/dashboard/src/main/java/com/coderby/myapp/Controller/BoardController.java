@@ -32,6 +32,11 @@ public class BoardController {
 		model.addAttribute("min", dateRange.get("min"));
 		model.addAttribute("max", dateRange.get("max"));
 		
+		// 카테고리, 언론사 빈도수 TOP1
+		Map<String, Object> freq = boardService.freq();
+		model.addAttribute("freq", freq);
+		
+		
 		// 카테고리별 분포 
 		Map<String, Object> map = boardService.category();
 		model.addAttribute("map", map);
