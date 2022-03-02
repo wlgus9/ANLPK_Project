@@ -15,4 +15,6 @@ public interface IBoardService {
 	double preRatio();
 	long candidate();
 	List<String> wordCloud();
+	long newWordListCount();
+	List<String> newWordListWeekCount();
 }

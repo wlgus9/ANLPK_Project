@@ -4,7 +4,6 @@
 var root = am5.Root.new("chartdiv2");
 var data = JSON.parse(document.getElementById("wordCloud").value);
 
-console.log(data);
 
 // Set themes
 // https://www.amcharts.com/docs/v5/concepts/themes/

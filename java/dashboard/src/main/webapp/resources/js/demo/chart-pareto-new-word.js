@@ -1,11 +1,13 @@
+console.log(document.getElementById("newWordList").value);
 
-var weekData = JSON.parse(document.getElementById("week").value);
+var newWord = JSON.parse(document.getElementById("newWordList"));
+console.log(newWord);
 
 am5.ready(function() {
 
 	// Create root element
 	// https://www.amcharts.com/docs/v5/getting-started/#Root_element
-	var root = am5.Root.new("chartdiv");
+	var root = am5.Root.new("newWordList");
 
 
 	// Set themes
@@ -27,7 +29,7 @@ am5.ready(function() {
 
 	var colors = chart.get("colors");
 
-	var data = weekData;
+	var data = newWord;
 
 	prepareParetoData();
 

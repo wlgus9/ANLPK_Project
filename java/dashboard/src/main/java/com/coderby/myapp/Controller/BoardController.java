@@ -57,9 +57,17 @@ public class BoardController {
 		long candidate = boardService.candidate();
 		model.addAttribute("candidate", candidate);
 		
-		// 신조어 워드 클라우드 
+		// 신조어 후보군 워드 클라우드 
 		List<String> wordCloud = boardService.wordCloud();
 		model.addAttribute("wordCloud", wordCloud);
+		
+		// 최종적으로 추출된 신조어 수
+		long newWordListCount = boardService.newWordListCount();
+		model.addAttribute("newWordListCount", newWordListCount);
+		
+		// 신조어 추출 추이 
+		List<String> newWordListWeekCount = boardService.newWordListWeekCount();
+		model.addAttribute("newWordListWeekCount", newWordListWeekCount);
 		
 		return "index";
 	}

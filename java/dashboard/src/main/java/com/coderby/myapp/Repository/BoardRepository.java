@@ -31,14 +31,15 @@ public class BoardRepository implements IBoardRepository {
 
 	MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
 	MongoDatabase db = mongoClient.getDatabase("news");
-	MongoCollection<org.bson.Document> col = db.getCollection("news"); // 전체 기사
-	MongoCollection<org.bson.Document> col2 = db.getCollection("pp_news"); // 전처리 후 기사
-	MongoCollection<org.bson.Document> col3 = db.getCollection("c_wordlist"); // 신조어 후보군
+	MongoCollection<org.bson.Document> news = db.getCollection("news"); // 전체 기사
+	MongoCollection<org.bson.Document> pp_news = db.getCollection("pp_news"); // 전처리 후 기사
+	MongoCollection<org.bson.Document> c_wordlist = db.getCollection("c_wordlist"); // 신조어 후보군
+	MongoCollection<org.bson.Document> new_word_list = db.getCollection("new_word_list"); // 최종 신조어 
 
 	@Override
 	public long totalData() {
 		System.out.println("repository ==================");
-		long totalData = col.estimatedDocumentCount();
+		long totalData = news.estimatedDocumentCount();
 
 		System.out.println(totalData);
 
@@ -48,7 +49,7 @@ public class BoardRepository implements IBoardRepository {
 	@Override
 	public Document dateRange() {
 
-		AggregateIterable<Document> date = col.aggregate(Arrays
+		AggregateIterable<Document> date = news.aggregate(Arrays
 				.asList(Aggregates.group("", Accumulators.min("min", "$date"), Accumulators.max("max", "$date"))));
 
 		MongoCursor<Document> cursor = date.cursor();
@@ -66,7 +67,7 @@ public class BoardRepository implements IBoardRepository {
 	@Override
 	public Map<String, Object> category() {
 
-		AggregateIterable<Document> cate = col.aggregate(Arrays.asList(
+		AggregateIterable<Document> cate = news.aggregate(Arrays.asList(
 				Aggregates.group("$category", Accumulators.sum("count", 1)), Aggregates.sort(descending("count"))));
 
 		MongoCursor<Document> cursor = cate.cursor();
@@ -91,7 +92,7 @@ public class BoardRepository implements IBoardRepository {
 
 	@Override
 	public List<String> weekCount() {
-		AggregateIterable<Document> weekCount = col.aggregate(Arrays
+		AggregateIterable<Document> weekCount = news.aggregate(Arrays
 				.asList(Aggregates.group("$week", Accumulators.sum("count", 1)), Aggregates.sort(ascending("_id"))));
 
 		MongoCursor<Document> cursor = weekCount.cursor();
@@ -111,10 +112,10 @@ public class BoardRepository implements IBoardRepository {
 	}
 
 	public Map<String, Object> freq() {
-		AggregateIterable<Document> cate = col.aggregate(Arrays.asList(
+		AggregateIterable<Document> cate = news.aggregate(Arrays.asList(
 				Aggregates.group("$category", Accumulators.sum("count", 1)), Aggregates.sort(descending("count"))));
 
-		AggregateIterable<Document> source = col.aggregate(Arrays.asList(
+		AggregateIterable<Document> source = news.aggregate(Arrays.asList(
 				Aggregates.group("$source", Accumulators.sum("count", 1)), Aggregates.sort(descending("count"))));
 
 		MongoCursor<Document> cursor = cate.cursor();
@@ -145,20 +146,20 @@ public class BoardRepository implements IBoardRepository {
 
 	@Override
 	public long preData() {
-		long preData = col2.estimatedDocumentCount();
+		long preData = pp_news.estimatedDocumentCount();
 		return preData;
 	}
 
 	@Override
 	public double preRatio() {
-		double preRatio = (double) col2.estimatedDocumentCount() / (double) col.estimatedDocumentCount() * 100;
+		double preRatio = (double) pp_news.estimatedDocumentCount() / (double) news.estimatedDocumentCount() * 100;
 		preRatio = Math.round(preRatio * 10) / 10.0;
 		return preRatio;
 	}
 
 	@Override
 	public long candidate() {
-		long candidate = col3.estimatedDocumentCount();
+		long candidate = c_wordlist.estimatedDocumentCount();
 		return candidate;
 	}
 
@@ -166,7 +167,7 @@ public class BoardRepository implements IBoardRepository {
 	public List<String> wordCloud() {
 
 		Bson projectionFields = Projections.fields(Projections.include("new_word", "freq"), Projections.excludeId());
-		MongoCursor<Document> cursor = col3.find(gte("freq", 50)).projection(projectionFields).iterator();
+		MongoCursor<Document> cursor = c_wordlist.find(gte("freq", 50)).projection(projectionFields).iterator();
 
 		List<String> word = new ArrayList<String>();
 		Document doc = new Document();
@@ -176,8 +177,34 @@ public class BoardRepository implements IBoardRepository {
 			word.add(doc.toJson());
 
 		}
-		System.out.println(word);
 		return word;
+	}
+
+	@Override
+	public long newWordListCount() {
+		long newWordListCount = new_word_list.estimatedDocumentCount();
+		return newWordListCount;
+	}
+
+	@Override
+	public List<String> newWordListWeekCount() {
+		AggregateIterable<Document> newWord = new_word_list.aggregate(Arrays
+				.asList(Aggregates.group("$week", Accumulators.sum("count", 1)), Aggregates.sort(ascending("_id"))));
+
+		MongoCursor<Document> cursor = newWord.cursor();
+
+		Document doc = new Document();
+
+		List<String> newWordListWeekCount = new ArrayList<String>();
+
+		while (cursor.hasNext()) {
+			doc = cursor.next();
+			newWordListWeekCount.add(doc.toJson());
+		}
+
+		System.out.println(newWordListWeekCount);
+
+		return newWordListWeekCount;
 	}
 
 }

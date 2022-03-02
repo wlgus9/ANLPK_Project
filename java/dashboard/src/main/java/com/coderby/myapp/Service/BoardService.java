@@ -80,4 +80,16 @@ public class BoardService implements IBoardService {
 		return wordCloud;
 	}
 
+	@Override
+	public long newWordListCount() {
+		long newWordListCount = boardRepository.newWordListCount();
+		return newWordListCount;
+	}
+
+	@Override
+	public List<String> newWordListWeekCount() {
+		List<String> newWordListWeekCount = boardRepository.newWordListWeekCount();
+		return newWordListWeekCount;
+	}
+
 }
