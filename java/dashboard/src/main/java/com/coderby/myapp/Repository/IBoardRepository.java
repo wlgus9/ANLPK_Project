@@ -11,4 +11,8 @@ public interface IBoardRepository {
 	Map<String, Object> category();
 	Map<String, Object> freq();
 	List<String> weekCount();
+	long preData();
+	double preRatio();
+	long candidate();
+	List<String> wordCloud();
 }

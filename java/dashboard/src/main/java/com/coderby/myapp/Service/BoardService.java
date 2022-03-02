@@ -56,4 +56,28 @@ public class BoardService implements IBoardService {
 		return freq;
 	}
 
+	@Override
+	public long preData() {
+		long preData = boardRepository.preData();
+		return preData;
+	}
+
+	@Override
+	public double preRatio() {
+		double preRatio = boardRepository.preRatio();
+		return preRatio;
+	}
+
+	@Override
+	public long candidate() {
+		long candidate = boardRepository.candidate();
+		return candidate;
+	}
+
+	@Override
+	public List<String> wordCloud() {
+		List<String> wordCloud = boardRepository.wordCloud();
+		return wordCloud;
+	}
+
 }

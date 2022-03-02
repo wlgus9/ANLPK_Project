@@ -1,7 +1,7 @@
 function test() {
 
 	var weekData = JSON.parse(document.getElementById("week").value);
-	
+
 	am5.ready(function() {
 
 		// Create root element
@@ -38,16 +38,9 @@ function test() {
 			for (var i = 0; i < data.length; i++) {
 				var value = data[i].count;
 				total += value;
-			}
-
-			var sum = 0;
-			for (var i = 0; i < data.length; i++) {
-				var value = data[i].count;
-				sum += value;
-				data[i].pareto = sum / total * 100;
+				data[i].pareto = total;
 			}
 		}
-
 
 
 		// Create axes
@@ -69,16 +62,17 @@ function test() {
 			renderer: am5xy.AxisRendererY.new(root, {})
 		}));
 
+
+
 		var paretoAxisRenderer = am5xy.AxisRendererY.new(root, { opposite: true });
 		var paretoAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
 			renderer: paretoAxisRenderer,
-			min: 0,
-			max: 100,
-			strictMinMax: true
+			extraTooltipPrecision: 1
+
 		}));
 
 		paretoAxisRenderer.grid.template.set("forceHidden", true);
-		paretoAxis.set("numberFormat", "#'%");
+		paretoAxis.set("numberFormat", "#");
 
 
 		// Add series
@@ -86,12 +80,12 @@ function test() {
 		var series = chart.series.push(am5xy.ColumnSeries.new(root, {
 			xAxis: xAxis,
 			yAxis: yAxis,
-			valueYField: "count",
+			valueYField: "pareto",
 			categoryXField: "_id"
 		}));
 
 		series.columns.template.setAll({
-			tooltipText: "{categoryX}: {valueY}",
+			tooltipText: "{categoryX}: {count}" + "\n" + "누적합: {valueY}",
 			tooltipY: 0,
 			strokeOpacity: 0,
 			cornerRadiusTL: 6,
@@ -106,8 +100,8 @@ function test() {
 		// pareto series
 		var paretoSeries = chart.series.push(am5xy.LineSeries.new(root, {
 			xAxis: xAxis,
-			yAxis: paretoAxis,
-			valueYField: "pareto",
+			yAxis: yAxis,
+			valueYField: "count",
 			categoryXField: "_id",
 			stroke: root.interfaceColors.get("alternativeBackground"),
 			maskBullets: false

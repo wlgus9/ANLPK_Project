@@ -45,6 +45,22 @@ public class BoardController {
 		List<String> week = boardService.weekCount();
 		model.addAttribute("weekCount", week);
 		
+		// 전처리 진행된 기사 수 
+		long preData = boardService.preData();
+		model.addAttribute("preData", preData);
+		
+		// 전처리 진행된 기사 비율 
+		double preRatio = boardService.preRatio();
+		model.addAttribute("preRatio", preRatio);
+		
+		// 신조어 후보군 개수 
+		long candidate = boardService.candidate();
+		model.addAttribute("candidate", candidate);
+		
+		// 신조어 워드 클라우드 
+		List<String> wordCloud = boardService.wordCloud();
+		model.addAttribute("wordCloud", wordCloud);
+		
 		return "index";
 	}
 
