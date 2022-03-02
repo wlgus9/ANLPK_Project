@@ -1,5 +1,6 @@
 package com.coderby.myapp.Repository;
 
+import static com.mongodb.client.model.Filters.gte;
 import static com.mongodb.client.model.Sorts.ascending;
 import static com.mongodb.client.model.Sorts.descending;
 
@@ -165,7 +166,7 @@ public class BoardRepository implements IBoardRepository {
 	public List<String> wordCloud() {
 
 		Bson projectionFields = Projections.fields(Projections.include("new_word", "freq"), Projections.excludeId());
-		MongoCursor<Document> cursor = col3.find().projection(projectionFields).iterator();
+		MongoCursor<Document> cursor = col3.find(gte("freq", 50)).projection(projectionFields).iterator();
 
 		List<String> word = new ArrayList<String>();
 		Document doc = new Document();
@@ -175,7 +176,7 @@ public class BoardRepository implements IBoardRepository {
 			word.add(doc.toJson());
 
 		}
-
+		System.out.println(word);
 		return word;
 	}
 

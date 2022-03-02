@@ -33,6 +33,15 @@
   width: 100%;
   @include media-breakpoint-up(md) {
     height: 330px;
+    }
+}
+</style>
+
+<style>
+#chartdiv2 {
+  width: 100%;
+  height: 95vh;
+
 }
 </style>
 
@@ -40,14 +49,12 @@
 <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/wc.js"></script>
 
 <script type="text/javascript">
-
-window.onload = function () {
-	
+window.onload = function () {	
 	test();
 }
-
 </script>
 
 </head>
@@ -612,7 +619,7 @@ window.onload = function () {
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">전처리 후 가장 많이 나온 신조어 후보군</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -630,7 +637,7 @@ window.onload = function () {
                                 <div class="card-body">
                                     <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
                                         <div id=chartdiv2></div>
-                                        <input type="hidden" value="${wordCloud}" id="wordCloud">
+                                        <input type="hidden" value='${wordCloud}' id="wordCloud">
                                     </div>
                                 </div>
                             </div>
@@ -1419,10 +1426,7 @@ window.onload = function () {
 
 	<!-- Core plugin JavaScript-->
 	<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-	<!-- Custom scripts for all pages-->
-	<script src="js/sb-admin-2.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>	
 
 	<!-- Page level plugins -->
 	<script src="vendor/chart.js/Chart.min.js"></script>
