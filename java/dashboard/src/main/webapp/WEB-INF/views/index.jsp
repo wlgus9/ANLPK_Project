@@ -45,7 +45,7 @@
 </style>
 
 <style>
-#newWordList {
+#newWord {
   position: relative;
   height: 330px;
   width: 100%;
@@ -60,12 +60,6 @@
 <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script src="https://cdn.amcharts.com/lib/5/wc.js"></script>
-
-<script>
-
-
-
-</script>
 
 </head>
 
@@ -486,7 +480,7 @@
 								<div class="card-body">
 									<div class="chart-area">										
 										<div id="chartdiv"></div> 
-											<input type="hidden" value='${weekCount}' id="week">
+										<input type="hidden" value='${weekCount}' id="week">
 									</div>
 								</div>
 							</div>
@@ -645,7 +639,7 @@
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-area"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                                    <div class="chart-area">
                                         <div id=chartdiv2></div>
                                         <input type="hidden" value='${wordCloud}' id="wordCloud">
                                     </div>
@@ -758,7 +752,7 @@
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">신조어 추출 추이</h6>
                                     <div class="dropdown no-arrow">
                                         <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -775,7 +769,7 @@
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
-                                       	<div id="newWordList"></div>
+                                       	<div id="newWord"></div>
                                        	<input type="hidden" value='${newWordListWeekCount}' id="newWordList">
                                     </div>
                                 </div>

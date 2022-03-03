@@ -1,13 +1,12 @@
-console.log(document.getElementById("newWordList").value);
 
-var newWord = JSON.parse(document.getElementById("newWordList"));
+var newWord = JSON.parse(document.getElementById("newWordList").value);
 console.log(newWord);
 
 am5.ready(function() {
 
 	// Create root element
 	// https://www.amcharts.com/docs/v5/getting-started/#Root_element
-	var root = am5.Root.new("newWordList");
+	var root = am5.Root.new("newWord");
 
 
 	// Set themes
