@@ -14,7 +14,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
                 <div class="sidebar-brand-icon">
                     <image src="img/SaltLux_logo.PNG" width = "40px" height = "40px"></i>
                 </div>
@@ -26,21 +26,20 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="/">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>기사수집현황</span></a>
             </li>
 
             <!-- Divider -->
-            <hr class="sidebar-divider">
+            <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Table -->
-           <form action="/table">
             <li class="nav-item active">
+            	<a class="nav-link"  href="/table">
                     <i class="fas fa-fw fa-list-alt"></i>
-                    <span>신조어 리스트</span>
+                    <span>신조어 리스트</span></a>
             </li>
-            </form>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -70,6 +69,7 @@
 				<div class="container-fluid">
 
 					<!-- Page Heading -->
+					<p>
 					<h1 class="h3 mb-2 text-gray-800">Tables</h1>
 					<p class="mb-4">
 						DataTables is a third party plugin that is used to generate the

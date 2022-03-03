@@ -14,7 +14,7 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
                 <div class="sidebar-brand-icon">
                     <image src="img/SaltLux_logo.PNG" width = "40px" height = "40px"></i>
                 </div>
@@ -26,7 +26,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="index.html">
+                <a class="nav-link" href="/">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>기사수집현황</span></a>
             </li>
@@ -36,7 +36,7 @@
 
             <!-- Nav Item - Table -->
             <li class="nav-item active">
-                <a class="nav-link" href="/myapp/table">
+                <a class="nav-link" href="/table">
                     <i class="fas fa-fw fa-list-alt"></i>
                     <span>신조어 리스트</span></a>
             </li>
