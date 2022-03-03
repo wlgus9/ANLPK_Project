@@ -23,6 +23,7 @@ public class BoardController {
 		
 		System.out.println("controller ===========");
 		
+		// ========================== 데이터 수집 현황 ==========================		
 		// 총 기사 개수 
 		long totalData = boardService.totalData();		
 		model.addAttribute("totalData", totalData);
@@ -34,8 +35,7 @@ public class BoardController {
 		
 		// 카테고리, 언론사 빈도수 TOP1
 		Map<String, Object> freq = boardService.freq();
-		model.addAttribute("freq", freq);
-		
+		model.addAttribute("freq", freq);		
 		
 		// 카테고리별 분포 
 		Map<String, Object> map = boardService.category();
@@ -45,6 +45,7 @@ public class BoardController {
 		List<String> week = boardService.weekCount();
 		model.addAttribute("weekCount", week);
 		
+		// ========================== 전처리 현황 ==========================
 		// 전처리 진행된 기사 수 
 		long preData = boardService.preData();
 		model.addAttribute("preData", preData);
@@ -61,6 +62,11 @@ public class BoardController {
 		List<String> wordCloud = boardService.wordCloud();
 		model.addAttribute("wordCloud", wordCloud);
 		
+		// 신조어 후보군 카테고리별 분포 
+		Map<String, Object> map2 = boardService.category2();
+		model.addAttribute("map2", map2);
+		
+		// ========================== 신조어 추출 현황 ==========================
 		// 최종적으로 추출된 신조어 수
 		long newWordListCount = boardService.newWordListCount();
 		model.addAttribute("newWordListCount", newWordListCount);

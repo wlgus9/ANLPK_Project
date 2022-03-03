@@ -181,6 +181,31 @@ public class BoardRepository implements IBoardRepository {
 	}
 
 	@Override
+	public Map<String, Object> category2() {
+		AggregateIterable<Document> cate = c_wordlist.aggregate(Arrays.asList(
+				Aggregates.group("$category", Accumulators.sum("count", 1)), Aggregates.sort(descending("count"))));
+		
+		MongoCursor<Document> cursor = cate.cursor();
+		
+		Document doc = new Document();
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		List<String> label = new ArrayList<String>();
+		List<Integer> count = new ArrayList<Integer>();
+		
+		while (cursor.hasNext()) {
+			doc = cursor.next();
+			label.add(doc.getString("_id"));
+			count.add(doc.getInteger("count"));
+		}
+		map.put("label", label);
+		map.put("count", count);
+		System.out.println(map);
+		
+		return map;
+	}
+
+	@Override
 	public long newWordListCount() {
 		long newWordListCount = new_word_list.estimatedDocumentCount();
 		return newWordListCount;
@@ -206,5 +231,6 @@ public class BoardRepository implements IBoardRepository {
 
 		return newWordListWeekCount;
 	}
+
 
 }
