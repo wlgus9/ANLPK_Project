@@ -78,5 +78,10 @@ public class BoardController {
 		return "index";
 	}
 
+	@RequestMapping(value = "/table", method = RequestMethod.GET)
+	public String table(Model model) {
+		System.out.println("table()");
+		return "table";
+	}
 	
 }

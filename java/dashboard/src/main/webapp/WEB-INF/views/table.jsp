@@ -35,11 +35,12 @@
             <hr class="sidebar-divider">
 
             <!-- Nav Item - Table -->
+           <form action="/table">
             <li class="nav-item active">
-                <a class="nav-link" href="table.jsp">
                     <i class="fas fa-fw fa-list-alt"></i>
-                    <span>신조어 리스트</span></a>
+                    <span>신조어 리스트</span>
             </li>
+            </form>
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

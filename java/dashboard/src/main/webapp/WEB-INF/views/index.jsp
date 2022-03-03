@@ -36,7 +36,7 @@
 
             <!-- Nav Item - Table -->
             <li class="nav-item active">
-                <a class="nav-link" href="table.jsp">
+                <a class="nav-link" href="/myapp/table">
                     <i class="fas fa-fw fa-list-alt"></i>
                     <span>신조어 리스트</span></a>
             </li>
