@@ -59,8 +59,8 @@ def split_data_cate(df, version, path):
     데이터 카테고리별로 분리 및 저장
     df : pandas.Dataframe , version : int
     """
-    # cate_list = category_list(df)
-    cate_list = ['정치','사회','경제']
+    cate_list = category_list(df)
+    # cate_list = ['정치','사회','경제']
     for category in cate_list:
         df_cate = df[df['category'] == category]
         save_data(df_cate, path + '/preprocessed_' + category + '_V' + str(version) + '.csv')
@@ -82,26 +82,14 @@ def extract_proper_nouns(docs):
   :return: 추출한 고유명사
   """
 
-  # sum=0
-  # for docs in df_article:
-  # proper_noun = re.findall("'[A-Za-z0-9가-힣 ]+'", str(docs))
   proper_noun = re.findall('‘[A-Za-z0-9가-힣 ]+’', str(docs))
 
-  # sum += len(proper_noun)
   proper_noun = set(proper_noun)
   proper_noun = list(proper_noun)
   proper_nouns = [word.replace(' ', '').replace('‘', '').replace('’', '') for word in proper_noun]
   proper_nouns_txt = " ".join(proper_nouns)
-  # proper_nouns.append(no_space_proper_noun)
-
-  # f_proper_nouns_dict = dict()
-  # result = Counter(proper_nouns)
-  # for key, value in result.items():
-  #   if value >= frequency:
-  #     f_proper_nouns_dict[key] = value
 
   return proper_nouns_txt
-
 
 
 
@@ -114,8 +102,6 @@ def preprocessing_text(docs, source_list):
     :param source_list: 언론사 리스트
     :return: 기사가 전처리된 데이터 프레임
     """
-    # new_docs = []
-    # for docs in article:
 
     #이메일 제거
     new_doc = re.sub('[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+','',str(docs))
