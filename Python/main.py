@@ -6,6 +6,16 @@ import time
 import datetime
 import os
 
+
+# p_df = pd.read_csv("extract0228_0304/Article_preprocessed/전처리테스트V3.csv", encoding="utf-8")
+# p_df.drop(['Unnamed: 0'], axis=1, inplace=True)
+# p_df['proper_nouns'] = p_df['proper_nouns'].fillna('')
+# p_df.dropna(inplace=True)
+# p_df.groupby(['category']).count()
+# preprocess.split_data_cate(p_df,3,"extract0228_0304/Article_preprocessed")
+
+
+
 ######## 전처리 데이터 준비 #######
 
 def create_preprocessed_data(raw_data_file, ver, path = "extract0228_0304/Article_preprocessed"):
@@ -78,25 +88,27 @@ def noun_extract_func(cate, version):
 
         df_new_words = df_new_words.append(df_new_words_temp, ignore_index=True)
 
-    file_name = str('extract0228_0304/new_words/new_words_temp_' + cate + '_V'+str(version)+'_stop_pos.csv')
+    file_name = str('extract0228_0304/new_words/new_words_temp_' + cate + '_V'+str(version)+'.csv')
     df_new_words.to_csv(file_name, index=False, encoding='utf-8-sig')
     print('extract0228_0304/new_words'+'에 '+cate+'_V' + str(version)+' 신조어 파일 저장 완료')
+
 
 if __name__ == '__main__':
 
     ### 전처리 파일 저장
     start1 = time.time()
-    cate_list = ['사회', '정치', '경제'] #, '경제', '국제', '문화', '연예', '스포츠', 'IT', '사설칼럼', '보도자료']
+    cate_list = ['사회', '정치', '경제', '국제', '문화', '연예', '스포츠', 'IT', '사설칼럼', '보도자료']
     # cate_list = \
     # create_preprocessed_data("Article/2022년1월다음뉴스_주차별정리.csv", "1_3")
     end1 = time.time()
+
 
     ### 신조어 추출
     start2 = time.time()
     ## 카테고리 여러개 지정해서 여러개 신조어 파일 얻을때
     for cate in cate_list:
         # file_name = str('extract0228_0304/new_words/new_words_temp_' + cate + '_V1_2_proper.csv')
-        noun_extract_func(cate, "1_3")
+        noun_extract_func(cate, "3")
 
     ## 카테고리 하나 정해서 신조어 파일 하나 얻을때
     # file_name = str('extract0228_0304/new_words/new_words_temp_0301_경제.csv')

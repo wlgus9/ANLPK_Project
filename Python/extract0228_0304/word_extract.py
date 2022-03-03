@@ -36,7 +36,8 @@ def extract_nouns_list_week(train_preprocessed, cate, week, stop_pos, comp_corpu
   print('=> mecab 추출 명사 수:', len(mecab_nouns_all))
 
   # mecab 결과와 soynlp 결과 비교 후 신조어 후보 추출
-  new_word_dict = {soy_noun : freq for soy_noun, freq in soy_nouns_freq.items() if soy_noun not in mecab_nouns_freq.keys()}
+  new_word_list = [soy_noun for soy_noun in soy_nouns_freq.keys() if soy_noun not in mecab_nouns_freq.keys()]
+  new_word_dict = { soy_noun : get_soy_freq(train_preprocessed, soy_noun) for soy_noun in new_word_list }
   print("=> 신조어 후보 개수:", len(new_word_dict))
 
   # 전체 문서에서 빈도가 높은 고유명사와 빈도수 추출
@@ -58,6 +59,16 @@ def extract_nouns_list_week(train_preprocessed, cate, week, stop_pos, comp_corpu
   print('--------------------------------------------------------')
 
   return df_new_words
+
+
+# soy가 나온 기사 수 구하기
+def get_soy_freq(train_preprocessed, soy_noun):
+  cnt = 0
+  for article in train_preprocessed['article']:
+    if article.find(soy_noun) != -1 :
+      cnt += 1
+
+  return cnt
 
 
 # soynlp로 명사 추출 -> 제거할 pos 지정해서 처리 후 반환
@@ -133,7 +144,7 @@ def del_words_in_stop_pos(words_freq_dict, stop_pos):
   for word, pos_str in pos_str_dict.items():
     flag = 0
     for stop in stop_pos:
-      if pos_str.find(stop) != -1:
+      if (pos_str.find(stop) != -1) or pos_str == ' SN': # 숫자만 있는 경우도 제거
         flag = 1
     isstop_dict[word] = flag
   print('=> stop_pos 포함 명사 수:', sum(isstop_dict.values()))
