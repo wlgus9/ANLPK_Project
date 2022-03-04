@@ -27,30 +27,40 @@
 <!-- Styles -->
 <style>
 #chartdiv {
-  position: relative;
-  height: 330px;
-  width: 100%;
-  @include media-breakpoint-up(md) {
-    height: 330px;
-    }
+	position: relative;
+	height: 330px;
+	width: 100%;
+	@
+	include
+	media-breakpoint-up(md)
+	{
+	height
+	:
+	330px;
+}
 }
 </style>
 
 <style>
 #chartdiv2 {
-  width: 100%;
-  height: 95vh;
+	width: 100%;
+	height: 95vh;
 }
 </style>
 
 <style>
 #newWord {
-  position: relative;
-  height: 330px;
-  width: 100%;
-  @include media-breakpoint-up(md) {
-    height: 330px;
-    }
+	position: relative;
+	height: 330px;
+	width: 100%;
+	@
+	include
+	media-breakpoint-up(md)
+	{
+	height
+	:
+	330px;
+}
 }
 </style>
 

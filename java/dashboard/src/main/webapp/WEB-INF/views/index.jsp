@@ -10,54 +10,7 @@
 	<!-- Page Wrapper -->
 	<div id="wrapper">
 
-		<!-- Sidebar -->
-        <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-                <div class="sidebar-brand-icon">
-                    <image src="img/SaltLux_logo.PNG" width = "40px" height = "40px"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">AKNLP</div>
-            </a>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="/">
-                    <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>기사수집현황</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Table -->
-            <li class="nav-item active">
-                <a class="nav-link" href="/table">
-                    <i class="fas fa-fw fa-list-alt"></i>
-                    <span>신조어 리스트</span></a>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
-
-            <!-- Sidebar Message -->
-            <div class="sidebar-card d-none d-lg-flex">
-                <img class="sidebar-card-illustration mb-2" src="img/undraw_rocket.svg" alt="...">
-                <p class="text-center mb-2"><strong>SB Admin Pro</strong> is packed with premium features, components, and more!</p>
-                
-            </div>
-
-        </ul>
-        <!-- End of Sidebar -->
+		<jsp:include page = "includes/side-bar.jsp"/>
 
 		<!-- Content Wrapper -->
 		<div id="content-wrapper" class="d-flex flex-column">
@@ -72,7 +25,7 @@
 					<!-- Page Heading -->
 					<div
 						class="d-sm-flex align-items-center justify-content-between mb-4">
-						<h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+						<h1 class="h3 mb-0 text-gray-800">데이터 수집 현황</h1>
 					</div>
 
 					<!-- Content Row -->
@@ -496,22 +449,11 @@
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
-                                        <canvas id="myPieChart" width="277" height="245" style="display: block; width: 277px; height: 245px;" class="chartjs-render-monitor"></canvas>
+                                    <div class="chart-pie pt-4 pb-2">
+                                        <canvas id="myPieChart3" width="277" height="245" style="display: block; width: 277px; height: 245px;" class="chartjs-render-monitor"></canvas>
+                                        <input type="hidden" value='${map3.label}' id="label3">
+								        <input type="hidden" value='${map3.count}' id="count3">
                                     </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Politics
-                                        </span></div>
                                 </div>
                             </div>
                         </div>

@@ -3,7 +3,7 @@
 
 var root = am5.Root.new("chartdiv2");
 var data = JSON.parse(document.getElementById("wordCloud").value);
-
+console.log(data);
 
 // Set themes
 // https://www.amcharts.com/docs/v5/concepts/themes/
@@ -39,6 +39,13 @@ series.labels.template.setAll({
   paddingRight: 5,
   fontFamily: "Courier New",
   cursorOverStyle: "pointer"
+});
+
+series.labels.template.events.on("click", function(ev) {
+  const category = ev.target.dataItem.get("category");
+  //window.open("https://stackoverflow.com/questions/tagged/" + encodeURIComponent(category));
+  //window.open("http://naver.com");
+  alert("hi");
 });
 
 // Data from:

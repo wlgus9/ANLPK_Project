@@ -112,4 +112,12 @@ public class BoardService implements IBoardService {
 		return newWordListWeekCount;
 	}
 
+	@Override
+	public Map<String, Object> category3() {
+		
+		Map<String, Object> category3 = boardRepository.category3(); 
+		
+		return category3;
+	}
+
 }

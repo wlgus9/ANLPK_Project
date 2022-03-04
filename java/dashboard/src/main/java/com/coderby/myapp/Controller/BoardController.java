@@ -75,13 +75,21 @@ public class BoardController {
 		List<String> newWordListWeekCount = boardService.newWordListWeekCount();
 		model.addAttribute("newWordListWeekCount", newWordListWeekCount);
 		
+		// 신조어 카테고리 분포 
+		Map<String, Object> map3 = boardService.category3();
+		model.addAttribute("map3", map3);
+		
 		return "index";
 	}
 
 	@RequestMapping(value = "/table", method = RequestMethod.GET)
 	public String table(Model model) {
-		System.out.println("table()");
 		return "table";
+	}
+	
+	@RequestMapping(value = "/prepro", method = RequestMethod.GET)
+	public String prepro(Model model) {
+		return "prepro";
 	}
 	
 }
