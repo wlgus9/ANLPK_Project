@@ -7,14 +7,14 @@ import datetime
 import os
 
 
-# p_df = pd.read_csv("extract0228_0304/Article_preprocessed/전처리테스트V3.csv", encoding="utf-8")
+# p_df = pd.read_csv("extract0228_0304/Article_preprocessed/전처리완료데이터V4.csv", encoding="utf-8")
 # p_df.drop(['Unnamed: 0'], axis=1, inplace=True)
 # p_df['proper_nouns'] = p_df['proper_nouns'].fillna('')
 # p_df.dropna(inplace=True)
 # p_df.groupby(['category']).count()
-# preprocess.split_data_cate(p_df,3,"extract0228_0304/Article_preprocessed")
-
-
+# preprocess.split_data_cate(p_df,4,"extract0228_0304/Article_preprocessed")
+#
+# preprocess.category_list(p_df)
 
 ######## 전처리 데이터 준비 #######
 
@@ -24,10 +24,7 @@ def create_preprocessed_data(raw_data_file, ver, path = "extract0228_0304/Articl
      raw_data_file : 원본데이터 파일, path : 저장 위치
     """
     # 데이터 로드
-    df=pd.read_csv(raw_data_file, encoding='utf-8')
-
-    # 결측치 처리
-    df.dropna(inplace=True)
+    df = preprocess.set_data(raw_data_file)
 
     # 카테고리 목록
     cate_list = preprocess.category_list(df)
@@ -38,8 +35,8 @@ def create_preprocessed_data(raw_data_file, ver, path = "extract0228_0304/Articl
     # 전처리 된 데이터 카테고리 별로 분리하여 저장
     preprocess.split_data_cate(train_preprocessed,ver,path)
 
+    return cate_list
 
-    # return cate_list
 
 
 def noun_extract_func(cate, version):
@@ -97,9 +94,8 @@ if __name__ == '__main__':
 
     ### 전처리 파일 저장
     start1 = time.time()
-    cate_list = ['사회', '정치', '경제', '국제', '문화', '연예', '스포츠', 'IT', '사설칼럼', '보도자료']
-    # cate_list = \
-    # create_preprocessed_data("Article/2022년1월다음뉴스_주차별정리.csv", "1_3")
+    cate_list = ['IT', '경제', '국제', '문화', '보도자료', '사설칼럼', '사회', '스포츠', '연예', '정치']
+    cate_list = create_preprocessed_data("Article/", 4, path = "extract0228_0304/Article_preprocessed")
     end1 = time.time()
 
 
@@ -108,7 +104,7 @@ if __name__ == '__main__':
     ## 카테고리 여러개 지정해서 여러개 신조어 파일 얻을때
     for cate in cate_list:
         # file_name = str('extract0228_0304/new_words/new_words_temp_' + cate + '_V1_2_proper.csv')
-        noun_extract_func(cate, "3")
+        noun_extract_func(cate, "4")
 
     ## 카테고리 하나 정해서 신조어 파일 하나 얻을때
     # file_name = str('extract0228_0304/new_words/new_words_temp_0301_경제.csv')
