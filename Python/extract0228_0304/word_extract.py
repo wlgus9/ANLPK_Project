@@ -71,6 +71,19 @@ def get_soy_freq(train_preprocessed, soy_noun):
   return cnt
 
 
+# 매개변수 최종전처리된 데이터프레임 / 신조어후보군 데이터프레임의 단어리스트
+### 신조어후보군 데이터프레임에서 컬렴명 다시 확인해서 수정할것! ###
+def find_word_in_article(df, soy_noun, url):
+  new_df = df[df['url'] == url]
+  word_list = []
+
+  if new_df['article'].find(soy_noun) != -1:
+    word_list.append(soy_noun)
+
+  return word_list
+
+
+
 # soynlp로 명사 추출 -> 제거할 pos 지정해서 처리 후 반환
 def extract_words_freq_soy(df):
   """

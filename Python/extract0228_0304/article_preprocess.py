@@ -19,6 +19,10 @@ def preprocess_article(df):
      return : 본문전처리 + 고유명사 컬럼 데이터프레임
 
     """
+
+    # 영어 본문 제거
+    df = drop_article_eng(df)
+
     # 언론사 리스트 추출
     sources = source_list(df)
 
@@ -27,23 +31,21 @@ def preprocess_article(df):
     df['proper_nouns'] = df['proper_nouns'].apply(lambda x: extract_proper_nouns(x))
 
     # 기사 전처리 함수
-    df['article'] = df['article'].apply(lambda x : preprocessing_text(x, sources))
-    # print(new_df['article'][2])
+    df = preprocessing_text(df, sources)
 
-    train_preprocessed = df
+    df.dropna(inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
-    # 전처리 파일 저장
-    # file_name = str('extract0228_0304/Article_preprocessed/preprocessed_article_' + cate + '_' + str(date1) + '_' + str(date2) + '.csv')
-    # save_data(train_preprocessed, file_name)
-
-    return train_preprocessed
+    return df
 
 
 # 전처리할 데이터 불러오기 및 결측치 처리
-def set_data(df):
-    df = df.drop(['url'], axis=1)
-    df.dropna(inplace=True)
-    return df
+def set_data(file):
+    train_data = pd.read_csv(file)
+    train_data.dropna(axis=0, inplace=True)
+    train_data.reset_index(drop=True, inplace=True)
+
+    return train_data
 
 
 # 카테고리 리스트
@@ -60,17 +62,24 @@ def split_data_cate(df, version, path):
     df : pandas.Dataframe , version : int
     """
     cate_list = category_list(df)
-    # cate_list = ['정치','사회','경제']
     for category in cate_list:
         df_cate = df[df['category'] == category]
         save_data(df_cate, path + '/preprocessed_' + category + '_V' + str(version) + '.csv')
         print(path+'에 '+category+'_V' + str(version)+' 전처리 파일 저장 완료')
 
+
 # 언론사 리스트 추출
 def source_list(df):
     df_new = df.drop_duplicates(subset="source")
     source = sorted(df_new['source'].astype(str))
-    return source
+    new_source = []
+    for word in source:
+        new_word = re.sub('[^A-Za-z0-9가-힣”’]', '', word)
+        if new_word != '':
+            new_source.append(new_word)
+
+    new_source = list(set(new_source))
+    return new_source
 
 
 # 고유명사 추출
@@ -92,59 +101,140 @@ def extract_proper_nouns(docs):
   return proper_nouns_txt
 
 
+# 영어본문 제거
+def drop_article_eng(df):
+    new_docs = []
 
-def preprocessing_text(docs, source_list):
-    """
-    정규표현식으로 이메일, 언론사, 기자 이름, 특수문자 제거, 한음절 글자 제거
-    연속된 띄어쓰기 -> 단일 띄어씌기로 통일
+    print(df.isnull().sum())
+    for docs in df['article']:
+        # 한글을 못찾았을 경우
+        if len(re.findall('[가-힣]', str(docs))) == 0:
+            new_doc = None
+        elif (len(re.findall('[가-힣]',str(docs)))/len(str(docs))*100)<=10:
+            new_doc = None
+        else:
+            new_doc = docs
 
-    :param df: 카테고리, 기간 분할한 데이터 프레임
-    :param source_list: 언론사 리스트
-    :return: 기사가 전처리된 데이터 프레임
-    """
+        new_docs.append(new_doc)
 
-    #이메일 제거
-    new_doc = re.sub('[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+','',str(docs))
-    r_num = new_doc.rfind(',')
-    if new_doc[r_num:].rfind('기자'):
-        new_doc = new_doc = str(new_doc[0:r_num+1])
-    if new_doc[r_num:].rfind('특파원'):
-        new_doc = new_doc = str(new_doc[0:r_num+1])
-    l_num = new_doc.find(' = ')
-    new_doc = str(new_doc[l_num+1:])
+    df['article'] = pd.DataFrame(new_docs)
 
-    #언론사 제거
-    for word in source_list:
-        new_doc = re.sub(word,' ', new_doc)
+    print(df.isnull().sum())
 
-    #특수문자 제거
-    new_doc = re.sub('[^A-Za-z0-9가-힣”’-]', ' ', new_doc)
-    new_doc = new_doc.replace('”', '')
-    new_doc = new_doc.replace('’', '')
-    new_doc = new_doc.strip()
-    new_doc = ' '.join(new_doc.split())
+    df.dropna(axis=0, inplace=True)
+    df.reset_index(drop=True, inplace=True)
 
-    #한음절 글자 제거
-    new_doc = re.sub(' . ',' ', new_doc)
-    new_doc = re.sub(' . ',' ', new_doc)
-    new_doc = re.sub(' . ',' ', new_doc)
-    new_doc = new_doc.strip()
-    new_doc = " ".join(new_doc.split())
+    return df
 
-    # 숫자만 있는 글자 제거
-    new_doc = re.sub(' [0-9]+ ', ' ', new_doc)
-    new_doc = new_doc.strip()
-    new_doc = " ".join(new_doc.split())
 
-    # 숫자+글자(공백전까지) 제거
-    new_doc = re.sub(' [0-9]+[A-Za-z가-힣]+', ' ', new_doc)
-    new_doc = re.sub(' [0-9]+[A-Za-z가-힣]+', ' ', new_doc)
-    new_doc = re.sub(' [0-9]+[A-Za-z가-힣]+', ' ', new_doc)
-    new_doc = new_doc.strip()
-    new_doc = " ".join(new_doc.split())
+# 정규표현식으로 이메일, 언론사, 기자 이름, 특수문자 제거, 한음절 글자 제거, 숫자만 있는 글자 제거
+# 연속된 띄어쓰기 -> 단일 띄어씌기로 통일
 
-    # df['article'] = pd.DataFrame(new_docs)
-    return new_doc
+def preprocessing_text(df, l_source):
+    new_docs = []
+    idx = 0
+    cnt = 1
+    for docs in df['article']:
+
+        # new_doc = docs.replace('\\n', '')
+        # 이메일 제거
+        new_doc = re.sub('[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', '', str(docs))
+        print(cnt)
+        cnt += 1
+        # 기자 이름 제거 1번째 시도 (name 컬럼이용)
+        # 양식 그대로 제거
+        # new_doc = re.sub(df['name'][idx], '', new_doc)
+        # print(cnt)
+        # cnt+=1
+        # 2인 이상일때
+        l = list(set(re.split(r'[^A-Za-z0-9가-힣]', df['name'][idx])))
+        for word in l:
+            new_doc = re.sub(word, '', new_doc)
+
+        idx += 1
+        print(cnt)
+        cnt += 1
+
+        # 기자 이름 제거
+        new_doc = re.sub('[가-힣 ]+ ?기자', '', new_doc)
+        new_doc = re.sub('[가-힣 ]+ ?특파원', '', new_doc)
+        print(cnt)
+        cnt += 1
+        # (지역=언론사) 양식 제거
+        new_doc = re.sub('[A-Za-z가-힣 ]+=[가-힣0-9 ]+', '', new_doc)
+        print(cnt)
+        cnt += 1
+
+        # r_num = new_doc.rfind(',')
+        # if new_doc[r_num:].rfind('기자'):
+        #     new_doc = new_doc = str(new_doc[0:r_num+1])
+        # if new_doc[r_num:].rfind('특파원'):
+        #     new_doc = new_doc = str(new_doc[0:r_num+1])
+        # if new_doc.find(' = '):
+        #     l_num = new_doc.find(' = ')
+        #     new_doc = str(new_doc[l_num+1:])
+
+        # 홑 따옴표 안에 문자열 제거
+        new_doc = re.sub('’.+’', ' ', new_doc)
+
+        # 특수문자 제거
+        new_doc = re.sub('[^A-Za-z0-9가-힣”’-]', ' ', new_doc)
+        new_doc = new_doc.replace('”', '')
+        new_doc = new_doc.replace('’', '')
+        new_doc = new_doc.strip()
+        new_doc = ' '.join(new_doc.split())
+        print(cnt)
+        cnt += 1
+
+        # 언론사 제거
+        for word in l_source:
+            new_doc = re.sub(word, ' ', new_doc)
+        new_doc = new_doc.strip()
+        new_doc = ' '.join(new_doc.split())
+        print(cnt)
+        cnt += 1
+
+        # 한음절 글자 제거
+        new_doc = re.sub(' . ', ' ', new_doc)
+        new_doc = re.sub(' . ', ' ', new_doc)
+        new_doc = re.sub(' . ', ' ', new_doc)
+        new_doc = new_doc.strip()
+        new_doc = ' '.join(new_doc.split())
+        print(cnt)
+        cnt += 1
+
+        # 숫자만 있는 글자 제거
+        new_doc = re.sub(' [-]?[0-9]+ ', ' ', new_doc)
+        new_doc = new_doc.strip()
+        new_doc = ' '.join(new_doc.split())
+        print(cnt)
+        cnt += 1
+
+        # 숫자+글자(공백전까지) 제거(+,-)
+        new_doc = re.sub(' [-]?[0-9]+[A-Za-z가-힣]+', ' ', new_doc)
+        new_doc = re.sub(' [-]?[0-9]+[A-Za-z가-힣]+', ' ', new_doc)
+        new_doc = re.sub(' [-]?[0-9]+[A-Za-z가-힣]+', ' ', new_doc)
+        new_doc = new_doc.strip()
+        new_doc = ' '.join(new_doc.split())
+        print(cnt)
+        cnt += 1
+
+        # (-)+글자 제거
+        new_doc = re.sub(' [-][A-Za-z가-힣]+ ', ' ', new_doc)
+        new_doc = re.sub(' [-][A-Za-z가-힣]+ ', ' ', new_doc)
+        new_doc = re.sub(' [-][A-Za-z가-힣]+ ', ' ', new_doc)
+
+        new_doc = new_doc.strip()
+        new_doc = ' '.join(new_doc.split())
+        print(cnt)
+        cnt += 1
+
+        if new_doc == '' or new_doc == ' ':
+            new_doc = None
+        new_docs.append(new_doc)
+    df['article'] = pd.DataFrame(new_docs)
+
+    return df
 
 # 전처리 된 데이터 저장
 
