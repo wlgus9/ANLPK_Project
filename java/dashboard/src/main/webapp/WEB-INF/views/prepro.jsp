@@ -22,7 +22,7 @@
 						processData : false,
 						contentType : false,
 						success : function(data) {
-							
+						
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
 							var prepro = new Array();
