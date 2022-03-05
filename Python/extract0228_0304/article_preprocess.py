@@ -9,7 +9,34 @@ Original file is located at
 
 import pandas as pd
 import re
-from collections import Counter
+
+
+######## 전처리 데이터 준비 #######
+
+def create_preprocessed_data(raw_data_file, ver, path = "extract0228_0304/Article_preprocessed"):
+    """
+     전처리 데이터를 생성하여 지정한 경로에 저장하는 함수
+     raw_data_file : 원본데이터 파일, path : 저장 위치
+    """
+    # 데이터 로드
+    df = set_data(raw_data_file)
+
+    # 카테고리 목록
+    cate_list = category_list(df)
+
+    # 전처리 후 전처리 파일을 카테고리 별로 저장 (※기사별 고유명사 컬럼이 추가됌)
+    train_preprocessed = preprocess_article(df)
+
+    # 전처리 된 데이터 카테고리 별로 분리하여 저장
+    split_data_cate(train_preprocessed,ver,path)
+
+    return cate_list
+
+
+
+
+
+
 
 ###### 기사 전처리 함수
 def preprocess_article(df):
