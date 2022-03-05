@@ -9,45 +9,94 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
 	$(function() {
-		$("button[type = button]").click(function() {
-			req_url = "http://localhost:5000/url_test"
-			var form = $("form")[0];
-			var form_data = new FormData(form);
-			$.ajax({
-				url : req_url,
-				async : true,
-				type : "POST",
-				data : form_data,
-				processData : false,
-				contentType : false,
-				success : function(data) {
-
-					var valueList = new Array();
-
-					$.each(data, function(key, value) {
-						$.each(value, function(key, value) {
-							if (key == "count") {
-								valueList.push(value);
+		$("button[type = button]").click(
+				function() {
+					req_url = "http://localhost:5000/preprocess_article"
+					var form = $("form")[0];
+					var form_data = new FormData(form);
+					$.ajax({
+						url : req_url,
+						async : true,
+						type : "POST",
+						data : form_data,
+						processData : false,
+						contentType : false,
+						success : function(data) {
+							
+							// ----------------- 전처리 파트 JSON ----------------- 
+							
+							var prepro = new Array();
+							
+							$.each(data, function(key, value) {
+								console.log(value);
+								prepro.push(value);
+							});
+							
+							
+							function preproPrint(prepro) {
+								for (i = 0; i <prepro.length; i++) {
+									(function(x) {
+										setTimeout(function() {
+											$("#result").append(prepro[x]);
+											$("#result").append("<br>");
+										}, 1000 * x);
+									})(i);
+								}								
 							}
-						});
-					});
+														
+							preproPrint(prepro);
+							$("#modelButton").append("<input type='button' class='btn btn-primary' value='모델링'></input>");					
+							
+							
+							
+							
+							// ----------------- 모델링 파트 JSON ----------------- 
+							var valueList = new Array();
+							var modelList = new Array();
+							var wordList = new Array();
 
-					for (i = 0; i < data.length; i++) {
-						(function(x) {
-							setTimeout(function() {
-								console.log(valueList[x]);
-								$("#result").append(valueList[x]);
-								$("#result").append("<br>");
-							}, 1000 * x);
-						})(i);
-					}
+							/* $.each(data, function(key, value) {
+								console.log("valueList :: " + key, value);
+								valueList.push(value);
+							}); */
 
-				},
-				error : function(e) {
-					alert();
-				}
-			})
-		})
+						/* 	$.each(valueList[4], function(key, value) {
+								console.log("modelList :: " + value);
+								modelList.push(value);
+							});
+
+							for (i = 0; i < valueList[5].length; i++) {
+								console.log("wordList :: " + valueList[5][i]);
+								wordList.push(valueList[5][i]);
+							} */
+
+							/* valueList.pop();
+							valueList.pop();
+							valueList.pop(); */
+
+							/* var modeling = valueList.concat(modelList).concat(wordList);
+							console.log(modeling); */
+							
+							/* function modelingPrint(valueList) {
+								for (i = 0; i < valueList.length; i++) {
+									(function(x) {
+										setTimeout(function() {
+											$("#result").append("<font class='delete-word'>" + valueList[x] + "</font>");
+											$("#result").append("<hr>")
+											$("#result").append("<br>");
+										}, 1000 * x);
+									})(i);
+								}
+							}		
+							
+							modelingPrint(valueList); */
+							
+						},
+						error : function(e) {
+							alert();
+						}
+					})
+				})
 	})
 </script>
 
@@ -78,13 +127,15 @@
 			<!-- DataTales Example -->
 			<div class="card shadow mb-4">
 				<div class="card-header py-3">
+				<div align="center">
 					<h6 class="m-0 font-weight-bold text-primary">
-						<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+						<form
+							class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
 							<div class="input-group">
 								<input type="text" class="form-control form-control-sm"
 									placeholder="Search for..." aria-label="Search"
 									aria-describedby="basic-addon2"
-									style="height: 38px; width: 250px;">
+									style="height: 38px; width: 500px;">
 								<div class="input-group-append">
 									<button class="btn btn-primary" type="button">
 										<i class="fas fa-search fa-sm"></i>
@@ -94,12 +145,14 @@
 						</form>
 					</h6>
 				</div>
+				</div>
 				<div class="card-body">
 					<div class="table-responsive">
 						<table class="table table-bordered" id="dataTable" width="100%"
 							cellspacing="0">
 						</table>
-						<div id="result"></div>
+						<div id="result" style="text-align:center;"></div>
+						<div id="modelButton"></div>
 					</div>
 				</div>
 			</div>
