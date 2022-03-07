@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
+import org.json.simple.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -86,10 +87,29 @@ public class BoardController {
 	public String table(Model model) {
 		
 		// ========================== 신조어 테이블 ==========================
-		Map<String, Object> table = boardService.table();
+//		Map<String, Object> table = boardService.table();
+//		model.addAttribute("table_new_word", table.get("new_word"));
+//		model.addAttribute("table_freq", table.get("freq"));
+//		model.addAttribute("table_category", table.get("category"));
+//		model.addAttribute("table_week", table.get("week"));
+//		model.addAttribute("table_date1", table.get("date1"));
+//		model.addAttribute("table_date2", table.get("date2"));
+//		model.addAttribute("table", table);
+		
+//		JSONArray json = new JSONArray();
+//		json.add(table.get("new_word"));
+//		json.add(table.get("freq"));
+//		json.add(table.get("category"));
+//		json.add(table.get("week"));
+//		json.add(table.get("date1"));
+//		json.add(table.get("date2"));
+		
+		Object table = boardService.table();
+		
 		model.addAttribute("table", table);
 		
 		System.out.println("table() :: " + table);
+//		System.out.println("json() :: " + json);
 		
 		return "table";
 	}

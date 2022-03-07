@@ -7,12 +7,12 @@ import static com.mongodb.client.model.Sorts.descending;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.AggregateIterable;
@@ -318,11 +318,10 @@ public class BoardRepository implements IBoardRepository {
 	}
 
 	@Override
-	public Map<String, Object> table() {
+	public Object table() {
 		Bson projectionFields = Projections.fields(Projections.include("new_word", "freq", "category", "week", "date1", "date2"), Projections.excludeId());
 		MongoCursor<Document> cursor = c_wordlist.find(gte("freq", 50)).projection(projectionFields).iterator();
 		
-		Map<String, Object> map = new HashMap<String, Object>();
 		
 		List<String> new_word = new ArrayList<String>();
 		List<Integer> freq = new ArrayList<Integer>();
@@ -332,33 +331,29 @@ public class BoardRepository implements IBoardRepository {
 		List<String> date2 = new ArrayList<String>();
 		
 		Document doc = new Document();
-		
-		try {
-		    while (cursor.hasNext()) {
-		    	doc = cursor.next();
-				new_word.add(doc.getString("new_word"));
-				freq.add(doc.getInteger("freq"));
-				category.add(doc.getString("category"));
-				week.add(doc.getString("week"));
-				date1.add(doc.getString("date1"));
-				date2.add(doc.getString("date2"));
-		    }
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-		    cursor.close();
+		while(cursor.hasNext()) {
+			doc = cursor.next();
+			new_word.add(doc.getString("new_word"));
+			freq.add(doc.getInteger("freq"));
+			category.add(doc.getString("category"));
+			week.add(doc.getString("week"));
+			date1.add(doc.getString("date1"));
+			date2.add(doc.getString("date2"));
 		}
-
-		map.put("new_word", new_word);
-		map.put("freq", freq);
-		map.put("category", category);
-		map.put("week", week);
-		map.put("date1", date1);
-		map.put("date2", date2);
+		Object[][] arr = new Object[new_word.size()][6];
+		System.out.println(new_word.get(10));
 		
-		System.out.println(map);
 		
-		return map;
+		for(int i=0; i<new_word.size(); i++) {
+			arr[i][0] = new_word.get(i);
+			arr[i][1] = freq.get(i);
+			arr[i][2] = category.get(i);
+			arr[i][3] = week.get(i);
+			arr[i][4] = date1.get(i);
+			arr[i][5] = date2.get(i);
+		}
+		
+		return arr;
 	}
 
 }

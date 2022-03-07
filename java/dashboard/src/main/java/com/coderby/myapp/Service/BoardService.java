@@ -121,9 +121,9 @@ public class BoardService implements IBoardService {
 	}
 
 	@Override
-	public Map<String, Object> table() {
+	public Object table() {
 		
-		Map<String, Object> table = boardRepository.table(); 
+		Object table = boardRepository.table(); 
 		
 		return table;
 	}
