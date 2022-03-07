@@ -11,7 +11,7 @@
 	$(function() {
 		$("button[type = button]").click(
 				function() {
-					req_url = "http://localhost:5000/preprocess_article"
+					req_url = "http://localhost:5000/url_test";
 					var form = $("form")[0];
 					var form_data = new FormData(form);
 					$.ajax({
@@ -26,70 +26,35 @@
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
 							var prepro = new Array();
+							var text = ["설명1", "설명2", "설명3", "설명4", "설명5", "설명6"];
 							
 							$.each(data, function(key, value) {
-								console.log(value);
 								prepro.push(value);
 							});
-							
+	
 							function preproPrint(prepro) {
-								for (i = 0; i <prepro.length; i++) {
-									(function(x) {
+								var y=1;
+								for (i = 2; i <prepro.length+2; i++) {
+									(function(x, y) {
 										setTimeout(function() {
-											$("#result").append(prepro[x]);
-											$("#result").append("<br>");
-										}, 1000 * x);
-									})(i);
+											$("#result").append("<b>" + text[x-2] + "</b><br>");
+											$("#result").append(prepro[x-2]);
+											$("#result").append("<hr>");
+											
+											if(x > prepro.length) {
+												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>");	
+											}
+											
+											setTimeout(function() {
+												$("#result").empty();
+											}, 1000 * y);
+										}, 2000 * (x-y));
+									})(i, y);
 								}								
 							}
 														
 							preproPrint(prepro);
-							$("#modelButton").append("<input type='button' class='btn btn-primary' value='모델링'></input>");					
-							
-							
-							
-							
-							// ----------------- 모델링 파트 JSON ----------------- 
-							var valueList = new Array();
-							var modelList = new Array();
-							var wordList = new Array();
-
-							/* $.each(data, function(key, value) {
-								console.log("valueList :: " + key, value);
-								valueList.push(value);
-							}); */
-
-						/* 	$.each(valueList[4], function(key, value) {
-								console.log("modelList :: " + value);
-								modelList.push(value);
-							});
-
-							for (i = 0; i < valueList[5].length; i++) {
-								console.log("wordList :: " + valueList[5][i]);
-								wordList.push(valueList[5][i]);
-							} */
-
-							/* valueList.pop();
-							valueList.pop();
-							valueList.pop(); */
-
-							/* var modeling = valueList.concat(modelList).concat(wordList);
-							console.log(modeling); */
-							
-							/* function modelingPrint(valueList) {
-								for (i = 0; i < valueList.length; i++) {
-									(function(x) {
-										setTimeout(function() {
-											$("#result").append("<font class='delete-word'>" + valueList[x] + "</font>");
-											$("#result").append("<hr>")
-											$("#result").append("<br>");
-										}, 1000 * x);
-									})(i);
-								}
-							}		
-							
-							modelingPrint(valueList); */
-							
+											
 						},
 						error : function(e) {
 							alert();
@@ -99,7 +64,68 @@
 	})
 </script>
 
+<script>
 
+		function modeling() {
+			req_url = "http://localhost:5000/url_test2";
+			var form = $("form")[0];
+			var form_data = new FormData(form);
+			$.ajax({
+				url : req_url,
+				async : true,
+				type : "POST",
+				data : form_data,
+				processData : false,
+				contentType : false,
+				success : function(data) {
+					
+					console.log(data);
+					
+					// ----------------- 모델링 파트 JSON ----------------- 
+					var valueList = new Array();
+					var modelList = new Array();
+					var wordList = new Array();
+
+					$.each(data, function(key, value) {
+						console.log("valueList :: " + key, value);
+						valueList.push(value);
+					});
+
+					$.each(valueList[4], function(key, value) {
+						console.log("modelList :: " + value);
+						modelList.push(value);
+					});
+
+					for (i = 0; i < valueList[5].length; i++) {
+						console.log("wordList :: " + valueList[5][i]);
+						wordList.push(valueList[5][i]);
+					} 
+
+					valueList.splice(4, 2);
+					
+					var modeling = valueList.concat(modelList).concat(wordList);
+					function modelingPrint(modeling) {
+						var y=1;
+						for (i = 2; i <modeling.length+2; i++) {
+							(function(x) {
+								setTimeout(function() {
+									$("#result").append(modeling[x-2]);
+									$("#result").append("<hr>");
+								}, 1000 * x);
+							})(i);
+						}								
+					}
+					
+					modelingPrint(modeling);
+					
+				},
+				error : function(e) {
+					alert();
+				}
+			})
+		}
+
+</script>
 
 <body id="page-top">
 
@@ -126,32 +152,34 @@
 			<!-- DataTales Example -->
 			<div class="card shadow mb-4">
 				<div class="card-header py-3">
-				<div align="center">
-					<h6 class="m-0 font-weight-bold text-primary">
-						<form
-							class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
-							<div class="input-group">
-								<input type="text" class="form-control form-control-sm"
-									placeholder="Search for..." aria-label="Search"
-									aria-describedby="basic-addon2"
-									style="height: 38px; width: 500px;">
-								<div class="input-group-append">
-									<button class="btn btn-primary" type="button">
-										<i class="fas fa-search fa-sm"></i>
-									</button>
+					<div align="center">
+						<h6 class="m-0 font-weight-bold text-primary">
+							<form
+								class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
+								<div class="input-group">
+									<input type="text" class="form-control form-control-sm"
+										placeholder="Search for..." aria-label="Search"
+										aria-describedby="basic-addon2"
+										style="height: 38px; width: 500px;">
+									<div class="input-group-append">
+										<button class="btn btn-primary" type="button">
+											<i class="fas fa-search fa-sm"></i>
+										</button>
+									</div>
 								</div>
-							</div>
-						</form>
-					</h6>
-				</div>
+							</form>
+						</h6>
+					</div>
 				</div>
 				<div class="card-body">
 					<div class="table-responsive">
 						<table class="table table-bordered" id="dataTable" width="100%"
 							cellspacing="0">
 						</table>
-						<div id="result" style="text-align:center;"></div>
-						<div id="modelButton"></div>
+						<div id="result" style="text-align: center;"></div>
+						<div id="modelButton">
+						<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>
+						</div>
 					</div>
 				</div>
 			</div>

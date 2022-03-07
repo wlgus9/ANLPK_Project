@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.client.AggregateIterable;
@@ -42,7 +43,7 @@ public class BoardRepository implements IBoardRepository {
 		long totalData = news.estimatedDocumentCount();
 
 		System.out.println(totalData);
-
+		
 		return totalData;
 	}
 
@@ -55,12 +56,19 @@ public class BoardRepository implements IBoardRepository {
 		MongoCursor<Document> cursor = date.cursor();
 
 		Document doc = new Document();
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			System.out.println(doc.getString("min"));
-			System.out.println(doc.getString("max"));
+		
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				System.out.println(doc.getString("min"));
+				System.out.println(doc.getString("max"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
-
+		
 		return doc;
 	}
 
@@ -78,11 +86,18 @@ public class BoardRepository implements IBoardRepository {
 		List<String> label = new ArrayList<String>();
 		List<Integer> count = new ArrayList<Integer>();
 
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			label.add(doc.getString("_id"));
-			count.add(doc.getInteger("count"));
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				label.add(doc.getString("_id"));
+				count.add(doc.getInteger("count"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
+		
 		map.put("label", label);
 		map.put("count", count);
 		System.out.println(map);
@@ -101,13 +116,19 @@ public class BoardRepository implements IBoardRepository {
 
 		List<String> week = new ArrayList<String>();
 
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			week.add(doc.toJson());
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				week.add(doc.toJson());
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
 
 		System.out.println(week);
-
+		
 		return week;
 	}
 
@@ -127,26 +148,34 @@ public class BoardRepository implements IBoardRepository {
 		List<String> cateTop = new ArrayList<String>();
 		List<String> sourceTop = new ArrayList<String>();
 
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			cateTop.add(doc.getString("_id"));
-			break;
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				cateTop.add(doc.getString("_id"));
+				break;
+			}
+			
+			while (cursor2.hasNext()) {
+				doc = cursor2.next();
+				sourceTop.add(doc.getString("_id"));
+				break;
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
-
-		while (cursor2.hasNext()) {
-			doc = cursor2.next();
-			sourceTop.add(doc.getString("_id"));
-			break;
-		}
+		
 		map.put("cate", cateTop);
 		map.put("source", sourceTop);
-
+		
 		return map;
 	}
 
 	@Override
 	public long preData() {
 		long preData = pp_news.estimatedDocumentCount();
+		
 		return preData;
 	}
 
@@ -154,12 +183,14 @@ public class BoardRepository implements IBoardRepository {
 	public double preRatio() {
 		double preRatio = (double) pp_news.estimatedDocumentCount() / (double) news.estimatedDocumentCount() * 100;
 		preRatio = Math.round(preRatio * 10) / 10.0;
+		
 		return preRatio;
 	}
 
 	@Override
 	public long candidate() {
 		long candidate = c_wordlist.estimatedDocumentCount();
+		
 		return candidate;
 	}
 
@@ -172,11 +203,17 @@ public class BoardRepository implements IBoardRepository {
 		List<String> word = new ArrayList<String>();
 		Document doc = new Document();
 
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			word.add(doc.toJson());
-
+		try {
+			while (cursor.hasNext()) {				
+				doc = cursor.next();
+				word.add(doc.toJson());
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
+
 		System.out.println(word);
 		
 		return word;
@@ -195,11 +232,18 @@ public class BoardRepository implements IBoardRepository {
 		List<String> label = new ArrayList<String>();
 		List<Integer> count = new ArrayList<Integer>();
 		
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			label.add(doc.getString("_id"));
-			count.add(doc.getInteger("count"));
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				label.add(doc.getString("_id"));
+				count.add(doc.getInteger("count"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
+		
 		map.put("label", label);
 		map.put("count", count);
 		System.out.println(map);
@@ -210,6 +254,7 @@ public class BoardRepository implements IBoardRepository {
 	@Override
 	public long newWordListCount() {
 		long newWordListCount = new_word_list.estimatedDocumentCount();
+		
 		return newWordListCount;
 	}
 
@@ -223,10 +268,16 @@ public class BoardRepository implements IBoardRepository {
 		Document doc = new Document();
 
 		List<String> newWordListWeekCount = new ArrayList<String>();
-
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			newWordListWeekCount.add(doc.toJson());
+		
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				newWordListWeekCount.add(doc.toJson());
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
 
 		System.out.println(newWordListWeekCount);
@@ -247,13 +298,64 @@ public class BoardRepository implements IBoardRepository {
 		List<String> label = new ArrayList<String>();
 		List<Integer> count = new ArrayList<Integer>();
 		
-		while (cursor.hasNext()) {
-			doc = cursor.next();
-			label.add(doc.getString("_id"));
-			count.add(doc.getInteger("count"));
+		try {
+			while (cursor.hasNext()) {
+				doc = cursor.next();
+				label.add(doc.getString("_id"));
+				count.add(doc.getInteger("count"));
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
 		}
+		
 		map.put("label", label);
 		map.put("count", count);
+		System.out.println(map);
+		
+		return map;
+	}
+
+	@Override
+	public Map<String, Object> table() {
+		Bson projectionFields = Projections.fields(Projections.include("new_word", "freq", "category", "week", "date1", "date2"), Projections.excludeId());
+		MongoCursor<Document> cursor = c_wordlist.find(gte("freq", 50)).projection(projectionFields).iterator();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		List<String> new_word = new ArrayList<String>();
+		List<Integer> freq = new ArrayList<Integer>();
+		List<String> category = new ArrayList<String>();
+		List<String> week = new ArrayList<String>();
+		List<String> date1 = new ArrayList<String>();
+		List<String> date2 = new ArrayList<String>();
+		
+		Document doc = new Document();
+		
+		try {
+		    while (cursor.hasNext()) {
+		    	doc = cursor.next();
+				new_word.add(doc.getString("new_word"));
+				freq.add(doc.getInteger("freq"));
+				category.add(doc.getString("category"));
+				week.add(doc.getString("week"));
+				date1.add(doc.getString("date1"));
+				date2.add(doc.getString("date2"));
+		    }
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
+		}
+
+		map.put("new_word", new_word);
+		map.put("freq", freq);
+		map.put("category", category);
+		map.put("week", week);
+		map.put("date1", date1);
+		map.put("date2", date2);
+		
 		System.out.println(map);
 		
 		return map;

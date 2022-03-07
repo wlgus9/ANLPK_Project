@@ -19,4 +19,5 @@ public interface IBoardRepository {
 	long newWordListCount();
 	List<String> newWordListWeekCount();
 	Map<String, Object> category3();
+	Map<String, Object> table();
 }

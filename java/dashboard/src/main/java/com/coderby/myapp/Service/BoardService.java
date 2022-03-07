@@ -120,4 +120,12 @@ public class BoardService implements IBoardService {
 		return category3;
 	}
 
+	@Override
+	public Map<String, Object> table() {
+		
+		Map<String, Object> table = boardRepository.table(); 
+		
+		return table;
+	}
+
 }
