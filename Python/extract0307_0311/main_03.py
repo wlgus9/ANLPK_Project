@@ -1,7 +1,7 @@
-# from flask import Flask, render_template, request, jsonify, make_response
+from flask import Flask, render_template, request, jsonify, make_response
 import pandas as pd
 from konlpy.tag import Mecab
-import extract0228_0304.word_extract as word_extract
+import extract0307_0311.word_extract as word_extract
 # import extract0228_0304.article_preprocess as preprocess
 import re
 import os
@@ -11,32 +11,23 @@ import datetime
 
 
 
-# 전체 기사 전처리 파일 카테고리 별로 분리
-# p_df=pd.read_csv("extract0228_0304/Article_preprocessed/전처리완료데이터V5.csv")
-# p_df.isna().sum()
-# p_df.drop(['Unnamed: 0'], axis=1, inplace=True)
-# p_df['proper_nouns'] = p_df['proper_nouns'].fillna('')
-# p_df.dropna(inplace=True)
-# p_df.groupby(['category']).count()['article']
-# preprocess.split_data_cate(p_df,5,"extract0228_0304/Article_preprocessed")
-
 
 # 플라스크
-# app = Flask(__name__)
+app = Flask(__name__)
 
-'''
+
 ## 신조어 딕셔너리 생성함수
 def get_new_word_information(article_df):
     # url 기사가 해당하는 카테고리 csv 파일 불러오기, 이전 추출된 신조어 불러오기
-    path_preprocessed, path_new_words = 'extract0228_0304/Article_preprocessed', 'extract0228_0304/new_words'  # 전처리 파일 저장 경로
+    path_preprocessed, path_new_words = 'extract0307_0311/Article_preprocessed', 'extract0307_0311/new_words'  # 전처리 파일 저장 경로
     preprocessed_files, new_words_files = os.listdir(path_preprocessed), os.listdir(path_new_words)  # 전체 파일 목록
     cate = article_df['category'][0]
     week = article_df['week'][0]
     for preprocessed_file in preprocessed_files:  # 파일 목록 중에
-        if (cate in preprocessed_file) & ("V5" in preprocessed_file):  # 카테고리 및 버전에 따른 파일 이름 선택해서 불러오기
+        if (cate in preprocessed_file) & ("V5_1" in preprocessed_file):  # 카테고리 및 버전에 따른 파일 이름 선택해서 불러오기
             train_processed = pd.read_csv(str(path_preprocessed + '/' + preprocessed_file), encoding='utf-8-sig')
     for new_words_file in new_words_files:  # 파일 목록 중에
-        if (cate in new_words_file) & ("V5" in new_words_file):  # 카테고리 및 버전에 따른 파일 이름 선택해서 불러오기
+        if (cate in new_words_file) & ("V5_1" in new_words_file):  # 카테고리 및 버전에 따른 파일 이름 선택해서 불러오기
             new_words_pre = pd.read_csv(str(path_new_words + '/' + new_words_file), encoding='utf-8-sig')
 
     comp_corpus = list(new_words_pre.new_word)
@@ -69,7 +60,7 @@ def index():
 def preprocess_article():
     # 데이터 불러오기
     df = pd.read_csv('Article/최종기사데이터.csv')
-    # url = request.form.get("url")
+   # url = request.form.get("url")
     # 예제 URL
     url = 'https://news.v.daum.net/v/EOleJemQOS'
     # 언론사 목록 리스트로 저장
@@ -112,7 +103,7 @@ def preprocess_article():
         word_list = list(set(re.findall('[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', article)))
         cnt = 0
         for word in word_list:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -131,7 +122,7 @@ def preprocess_article():
         word_list = list(set(re.findall('[가-힣 ]+ ?기자', article) + re.findall('[가-힣 ]+ ?특파원', article)))
         cnt = 0
         for word in word_list:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -150,7 +141,7 @@ def preprocess_article():
         word_list = list(set(re.split(r'[^A-Za-z0-9가-힣]', str(df['name'][0]))))
         cnt = 0
         for word in word_list:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -169,7 +160,7 @@ def preprocess_article():
         word_list = list(set(re.findall('[A-Za-z가-힣 ]+=[가-힣0-9 ]+', article)))
         cnt = 0
         for word in word_list:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -188,7 +179,7 @@ def preprocess_article():
         word_list = list(set(re.findall('‘.+?’', article)))
         cnt = 0
         for word in word_list:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -214,7 +205,7 @@ def preprocess_article():
         # 9. 언론사 제거
         cnt = 0
         for word in l_source:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -235,7 +226,7 @@ def preprocess_article():
             word_list = list(set(re.findall(' . ', article)))
             if len(word_list) > 0:
                 for word in word_list:
-                    highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+                    highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
                     if cnt == 0:
                         highlighted = re.sub(word, highlight_words, article)
                     else:
@@ -257,7 +248,7 @@ def preprocess_article():
         word_list = list(set(re.findall(' [-]?[0-9]+ ', article)))
         cnt = 0
         for word in word_list:
-            highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+            highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
             if cnt == 0:
                 highlighted = re.sub(word, highlight_words, article)
             else:
@@ -280,7 +271,7 @@ def preprocess_article():
             word_list = list(set(re.findall(' [-]?[0-9]+[A-Za-z가-힣]+', article)))
             if len(word_list) > 0:
                 for word in word_list:
-                    highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+                    highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
                     if cnt == 0:
                         highlighted = re.sub(word, highlight_words, article)
                     else:
@@ -304,7 +295,7 @@ def preprocess_article():
             word_list = list(set(re.findall(' [-][A-Za-z가-힣]+ ', article)))
             if len(word_list) > 0:
                 for word in word_list:
-                    highlight_words = word.replace(word, '<font class="delete-word">' + word + '</font>')
+                    highlight_words = word.replace(word, '<span class="delete-word">' + word + '</span>')
                     if cnt == 0:
                         highlighted = re.sub(word, highlight_words, article)
                     else:
@@ -334,8 +325,9 @@ def preprocess_article():
 
 @app.route("/get_new_words", methods=["POST"]) # 신조어 추출 라우트 함수
 def get_new_words():
+    url = request.form.get("url")
     articles = pd.read_csv("Article/최종기사데이터.csv", encoding='utf-8')
-    article_one = articles[articles['url'] == 'https://news.v.daum.net/v/EOleJemQOS'].reset_index(drop=True)
+    article_one = articles[articles['url'] == url].reset_index(drop=True)
     new_word_information = get_new_word_information(article_one)
     print(new_word_information)
 
@@ -344,81 +336,56 @@ def get_new_words():
 
     return response
 
-'''
 
-p_df = pd.read_csv("extract0228_0304/Article_preprocessed/preprocessed_사회_V5.csv")
-df = p_df.copy()
-df['proper_nouns']=df['proper_nouns'].fillna('')
-df_society_week1 = df[df['week'] =='1주차' ]
-
-# 비교사전 로드
-mecab_new_corpus = pd.read_csv("mecab_new_corpus.csv",encoding="cp949")
-new_word_list_pre= list(mecab_new_corpus.단어.unique())
-nia_dic = pd.read_csv('NIADic.csv', encoding='cp949')
-nia_term_list= list(nia_dic.term.unique())
-comp_corpus = list(set(new_word_list_pre + nia_term_list))
-
-# 명사 제외할 pos 태깅
-stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC','EF','VV', 'SY SN', 'JX', 'MAG','JKB'] # XSA- ~한, ETM- ~한,
-# JKB: ~으로
-# SY SN : 음수 제거
-# MAG : 게다가, 가득
-# JX : 까지
-df_new_words = word_extract.extract_nouns_list_week(df_society_week1,
-                                            '사회', '1주차',stop_pos=stop_pos, comp_corpus=comp_corpus)
-
-df_new_words.to_csv('new_words_사회_1주차_V6_2.csv',encoding='utf-8-sig', index=False)
 
 if __name__ == '__main__':
 
     #### flask 서버 연결
-    # app.debug = True
-    # app.run()
+    app.debug = True
+    app.run()
 
-    #### CSV 파일작업
-    ### 전처리 파일 저장
-    start1 = time.time()
-    cate_list = ['IT', '경제', '국제', '문화', '보도자료', '사설칼럼', '사회', '스포츠', '연예', '정치']
-    # cate_list = preprocess.create_preprocessed_data("Article/", 4, path = "extract0228_0304/Article_preprocessed")
-    end1 = time.time()
+    # p_df = pd.read_csv("extract0307_0311/Article_preprocessed/preprocessed_사회_V5.csv")
+    # df = p_df.copy()
+    # df['proper_nouns'] = df['proper_nouns'].fillna('')
+    # df_society_week1 = df[df['week'] == '1주차']
 
 
+
+    # 명사 제외할 pos 태깅
+    # stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC', 'EF', 'VV', 'SY SN', 'JX', 'MAG', 'JKB']  # XSA- ~한, ETM- ~한,
+    # JKB: ~으로
+    # SY SN : 음수 제거
+    # MAG : 게다가, 가득
+    # JX : 까지
+
+
+
+     #### 카테고리 별 전체 신조어 CSV 파일 생성 작업 - 주별 비교
+    # ### 전처리 파일 저장
+    # start1 = time.time()
+    # cate_list = ['IT', '경제', '국제', '문화', '보도자료', '사설칼럼', '사회', '스포츠', '연예', '정치']
+    # cate_list = ['사회', '스포츠', '연예', '정치']
+    # # cate_list = preprocess.create_preprocessed_data("Article/", 4, path = "extract0228_0304/Article_preprocessed")
+    # end1 = time.time()
+    #
+    #
     ### 신조어 추출
-    start2 = time.time()
+    # start2 = time.time()
     ## 카테고리 여러개 지정해서 여러개 신조어 파일 얻을때
-    for cate in cate_list:
+    # for cate in cate_list:
         # file_name = str('extract0228_0304/new_words/new_words_temp_' + cate + '_V1_2_proper.csv')
-        word_extract.noun_extract_func(cate, "5")
+        # word_extract.noun_extract_func(cate, "5")
 
     ## 카테고리 하나 정해서 신조어 파일 하나 얻을때
     # file_name = str('extract0228_0304/new_words/new_words_temp_0301_경제.csv')
     # noun_extract_func("경제", "1_1", file_name=file_name)
-    end2 = time.time()
-
-    sec = [end1 - start1, end2 - start2]
-    times = [str(datetime.timedelta(seconds=s)).split(".") for s in sec ]
-    times = [t[0] for t in times]
-    print(times) # 실행 시간 출력
-
-'''
-import pandas as pd
-import itertools
-from collections import Counter
-a=pd.read_csv('extract0228_0304/Article_preprocessed/preprocessed_경제_V1_1.csv', encoding='utf-8')
-a['prop'] = a['proper_nouns']
-a['prop'] = a['prop'].apply(lambda x : x.replace("[","").replace("]","").replace("'","").replace(",",""))
-
-tt=a['prop']
-tt = [t.split(' ')for t in tt if t != '']
-
-proper_nouns_all = list(itertools.chain(*tt))
-
-proper_nouns_freq = Counter(proper_nouns_all)
-proper_nouns_dict = { proper : freq for proper, freq in proper_nouns_freq.items() if freq >= 10 }
-print("=> 고유명사 수 :", len(proper_nouns_dict))
-
-'''
-
+    # word_extract.noun_extract_func('사회', 5)
+    # end2 = time.time()
+    #
+    # sec = [end1 - start1, end2 - start2]
+    # times = [str(datetime.timedelta(seconds=s)).split(".") for s in sec ]
+    # times = [t[0] for t in times]
+    # print(times) # 실행 시간 출력
 
 
 '''
@@ -461,3 +428,16 @@ print(a_result)
 
 '''
 
+'''
+b = {'안녕' : {'freq': 1},
+      '반가워' : {'freq': 4},
+      '아아' : {'freq': 6},
+      '코로나' : {'freq': 8}}
+a = {'안녕' : {'freq': 1, 'ratio' : 0.001},
+      '반가워' : {'freq': 4, 'ratio' : 0.004},
+      '아아' : {'freq': 6, 'ratio' : 0.006},
+      '코로나' : {'freq': 8, 'ratio' : 0.008}
+}
+
+{dict['ratio'] = dict['freq']/10 for dict in b.values()}
+'''
