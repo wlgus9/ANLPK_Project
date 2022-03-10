@@ -41,17 +41,14 @@
 								for (i = 2; i <prepro.length+2; i++) {
 									(function(x, y) {
 										setTimeout(function() {
-											//$("#result").append("<b>" + text[x-2] + "</b><br>");
+											$("#result").empty();
 											$("#result").append(prepro[x-2]);
 											$("#result").append("<hr>");
 											
 											if(x > prepro.length) {
 												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>");	
 											}
-											
-											setTimeout(function() {
-												$("#result").empty();
-											}, 1500 * y);
+
 										}, 3000 * (x-y));
 									})(i, y);
 								}								
