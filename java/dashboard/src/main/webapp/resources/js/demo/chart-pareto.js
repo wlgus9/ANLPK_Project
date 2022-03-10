@@ -8,13 +8,6 @@ am5.ready(function() {
 	var root = am5.Root.new("chartdiv");
 
 
-	// Set themes
-	// https://www.amcharts.com/docs/v5/concepts/themes/
-	root.setThemes([
-		am5themes_Animated.new(root)
-	]);
-
-
 	// Create chart
 	// https://www.amcharts.com/docs/v5/charts/xy-chart/
 	var chart = root.container.children.push(am5xy.XYChart.new(root, {
@@ -82,7 +75,19 @@ am5.ready(function() {
 		valueYField: "pareto",
 		categoryXField: "_id"
 	}));
-
+	
+	chart.get("colors").set("colors", [
+		  am5.color(0x9ADCFF),
+		  am5.color(0xFFF89A),
+		  am5.color(0xFFB2A6),
+		  am5.color(0xFF8AAE),
+		  am5.color(0xEA99D5),
+		  am5.color(0xBFFFF0),
+		  am5.color(0xF0FFC2),
+		  am5.color(0xFFE4C0),
+		  am5.color(0xFFBBBB)
+		]);
+	
 	series.columns.template.setAll({
 		tooltipText: "{categoryX}: {count}" + "\n" + "누적합: {valueY}",
 		tooltipY: 0,

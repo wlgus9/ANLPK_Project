@@ -20,7 +20,8 @@
 				<image src="img/SaltLux_logo.PNG" width="40px" height="40px">
 				</i>
 			</div>
-			<div class="sidebar-brand-text mx-3">AKNLP</div>
+			<div class="sidebar-brand-text mx-3">AKNLP<br>
+			</div>
 		</a>
 
 		<!-- Divider -->
@@ -57,10 +58,10 @@
 		<!-- Sidebar Message -->
 		<div class="sidebar-card d-none d-lg-flex">
 			<img class="sidebar-card-illustration mb-2"
-				src="img/undraw_rocket.svg" alt="...">
+				src="img/graph.png" alt="...">
 			<p class="text-center mb-2">
-				<strong>SB Admin Pro</strong> is packed with premium features,
-				components, and more!
+				<strong>AKNLP</strong> aim to improve 
+				Korean Natural Language Process, and more!
 			</p>
 
 		</div>
