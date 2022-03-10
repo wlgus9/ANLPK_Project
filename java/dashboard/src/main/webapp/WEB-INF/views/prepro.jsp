@@ -2,16 +2,20 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <jsp:include page="includes/header.jsp" />
 
+
 <!DOCTYPE html>
 <html lang="en">
-
+<script src="//cdn.amcharts.com/lib/5/index.js"></script>
+<script src="//cdn.amcharts.com/lib/5/percent.js"></script>
+<script src="//cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	
 <script>
 	$(function() {
 		$("button[type = button]").click(
 				function() {
-					req_url = "http://localhost:5000/url_test";
+					req_url = "http://localhost:5000/preprocess_article";
 					var form = $("form")[0];
 					var form_data = new FormData(form);
 					$.ajax({
@@ -26,7 +30,7 @@
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
 							var prepro = new Array();
-							var text = ["설명1", "설명2", "설명3", "설명4", "설명5", "설명6"];
+							//var text = ["설명1", "설명2", "설명3", "설명4", "설명5", "설명6"];
 							
 							$.each(data, function(key, value) {
 								prepro.push(value);
@@ -37,7 +41,7 @@
 								for (i = 2; i <prepro.length+2; i++) {
 									(function(x, y) {
 										setTimeout(function() {
-											$("#result").append("<b>" + text[x-2] + "</b><br>");
+											//$("#result").append("<b>" + text[x-2] + "</b><br>");
 											$("#result").append(prepro[x-2]);
 											$("#result").append("<hr>");
 											
@@ -47,8 +51,8 @@
 											
 											setTimeout(function() {
 												$("#result").empty();
-											}, 1000 * y);
-										}, 2000 * (x-y));
+											}, 1500 * y);
+										}, 3000 * (x-y));
 									})(i, y);
 								}								
 							}
@@ -67,7 +71,7 @@
 <script>
 
 		function modeling() {
-			req_url = "http://localhost:5000/url_test2";
+			req_url = "http://localhost:5000/get_new_words";
 			var form = $("form")[0];
 			var form_data = new FormData(form);
 			$.ajax({
@@ -105,12 +109,19 @@
 					
 					var modeling = valueList.concat(modelList).concat(wordList);
 					function modelingPrint(modeling) {
+						$("#modelButton").empty();
 						var y=1;
 						for (i = 2; i <modeling.length+2; i++) {
 							(function(x) {
 								setTimeout(function() {
-									$("#result").append(modeling[x-2]);
-									$("#result").append("<hr>");
+									
+									if(x < 13) {
+										$("#result").append(modeling[x-2]);
+										$("#result").append("<hr>");										
+									} else {
+										$("#result").append(modeling[x-2] + "&nbsp;");
+									}
+									
 								}, 1000 * x);
 							})(i);
 						}								
@@ -127,6 +138,7 @@
 
 </script>
 
+
 <body id="page-top">
 
 	<!-- Page Wrapper -->
@@ -141,7 +153,7 @@
 
 			<!-- Page Heading -->
 			<p>
-			<h1 class="h3 mb-2 text-gray-800">Tables</h1>
+			<h1 class="h3 mb-2 text-gray-800">전처리 과정</h1>
 			<p class="mb-4">
 				DataTables is a third party plugin that is used to generate the demo
 				table below. For more information about DataTables, please visit the
@@ -176,9 +188,8 @@
 						<table class="table table-bordered" id="dataTable" width="100%"
 							cellspacing="0">
 						</table>
-						<div id="result" style="text-align: center;"></div>
+						<div id="result"></div>
 						<div id="modelButton">
-						<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>
 						</div>
 					</div>
 				</div>
