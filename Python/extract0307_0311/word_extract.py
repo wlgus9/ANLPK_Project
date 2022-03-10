@@ -5,9 +5,60 @@ import pandas as pd
 from collections import Counter
 import os
 import numpy as np
+import re
+
+
+
+# 신조어 데이터프레임 / 불용어사전이름/ 오미크사전이름
+def filter(new_word_df):
+    sw_df = pd.read_csv('stop_words.csv',encoding='utf-8')
+    ww_df = pd.read_csv('wrong_words.csv',encoding='utf-8')
+
+    sw = list(sw_df['stop_word'])
+    ww_before = list(ww_df['before'])
+
+    for new_word in new_word_df['new_word']:
+        # ~씨 제거
+        if re.sub('[가-힣a-zA-Z ]+?씨', '', new_word) == '':
+            new_word_df.drop(new_word_df[new_word_df['new_word'] == new_word].index, inplace=True)
+        # 불용어 제거
+        if new_word in sw:
+            new_word_df.drop(new_word_df[new_word_df['new_word'] == new_word].index, inplace=True)
+        # 오미크 처리
+        if new_word in ww_before:
+            ww_after = list(ww_df.loc[ww_df['before'] == new_word, 'after'])
+            new_word_df.loc[new_word_df['new_word'] == new_word, 'new_word'] = ww_after[0]
+
+    new_word_df.reset_index(drop=True, inplace=True)
+
+    return new_word_df
+
+
+# 신조어 데이터프레임(불용어, 오미크 처리 후) / 기존에 갖고 있던 신조어 사전이름
+def final_dict(new_word_df, dic_df):
+    # dic_df = pd.read_csv(dic_name + '.csv', encoding='cp949')
+    duplicate_new_words = []
+    for new_word in new_word_df['new_word']:
+        if new_word in list(dic_df['new_word']):
+            duplicate_new_words.append(new_word)
+
+    for new_word in duplicate_new_words:
+        dic_ratio = list(dic_df['ratio'].loc[dic_df['new_word'] == new_word])
+        new_word_ratio = list(new_word_df['ratio'].loc[new_word_df['new_word'] == new_word])
+        if dic_ratio < new_word_ratio:
+            # 기존 단어 빈도수 < 새로 업데이트될 단어 빈도수
+            dic_df[dic_df['new_word'] == new_word] = new_word_df[new_word_df['new_word'] == new_word]
+        else :
+            # 기존 단어 빈도수 > 새로 업데이트될 단어 빈도수
+            new_word_df.drop(new_word_df[new_word_df['new_word'] == new_word].index, inplace=True)
+    dic_df = pd.concat([dic_df, new_word_df])
+    dic_df.reset_index(drop=True, inplace=True)
+
+    return dic_df
+
 
 ### 카테고리 내 모든 주 신조어 추출 함수
-def noun_extract_func(cate, version):
+def noun_extract_cate(cate, version):
     """
      카테고리에 따라 신조어 목록 csv 저장하는 함수
      cate : 카테고리(str), version : 전처리 버전 (int), filename : 저장 경로
@@ -23,22 +74,15 @@ def noun_extract_func(cate, version):
     for file in file_list:  # 파일 목록 중에
         if (cate in file) & ("V" + str(version) in file):  # 카테고리 및 버전에 따른 파일 이름 선택해서 불러오기
             train_processed = pd.read_csv(str(path + '/' + file), encoding='utf-8-sig')
+
+    # 고유명사 결측치 처리
+    train_processed_c = train_processed.copy()
+    train_processed_c['proper_nouns'] = train_processed_c['proper_nouns'].fillna('')
     ## 결측치 처리
-    train_processed.dropna(inplace=True)
+    train_processed_c.dropna(inplace=True)
 
     # week를 리스트로 저장
-    week_list = list(train_processed.week.unique())
-
-    # 2002-2019 신조어 목록 불러오기
-    # mecab_new_corpus = pd.read_csv("mecab_new_corpus.csv",encoding="cp949")
-    # new_word_list_pre= list(mecab_new_corpus.단어.unique())
-
-    # 비교사전 로드
-    mecab_new_corpus = pd.read_csv("mecab_new_corpus.csv", encoding="cp949")
-    new_word_list_pre = list(mecab_new_corpus.단어.unique())
-    nia_dic = pd.read_csv('NIADic.csv', encoding='cp949')
-    nia_term_list = list(nia_dic.term.unique())
-    corpus_dic = list(set(new_word_list_pre + nia_term_list))
+    week_list = list(train_processed_c.week.unique())
 
     stop_pos = ['NNBC', 'NNG XSN', 'SN SL', 'EC', 'EF', 'VV', 'SY SN', 'JX', 'MAG', 'JKB']  # XSA- ~한, ETM- ~한,
     # JKB: ~으로
@@ -46,13 +90,12 @@ def noun_extract_func(cate, version):
     # MAG : 게다가, 가득
     # JX : 까지
 
-    # 사회 1주차만
     df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'ratio', 'category', 'week', 'date1', 'date2'])
 
     ## 주별로 신조어 추출 후 비교한 결과를 저장
     for week in week_list:
-        new_word_list_update = corpus_dic + list(df_new_words.new_word.unique())
-        train_processed_week = train_processed[train_processed.week == week]
+        new_word_list_update = list(df_new_words.new_word.unique())
+        train_processed_week = train_processed_c[train_processed_c.week == week]
 
         # 주별 신조어 추출 : soynlp 추출 -> 한글자 제외, ~적, ~씨 불용어 처리 -> 빈도수 25% 이상 -> 사전 비교 추출
         df_new_words_temp = extract_nouns_list_week(train_processed_week, cate, week,
@@ -92,9 +135,10 @@ def flask_extract_nouns_list_week(train_preprocessed, article_one, cate, week, s
 
     # soynlp로 모든 단어 추출 -> 명사 가능성 적은 태깅 제거
     soy_words_dict = extract_words_soy(train_preprocessed)
-    model_dict['modeling'] = {1: 'soynlp로 추출한 모든 명사 수 : ' + str(len(soy_words_dict))}
+    model_dict['modeling'] = {1: cate+' '+week+' 기사, '+'soynlp로 추출한 모든 명사 수 : ' + str(len(soy_words_dict))}
     soy_nouns_dict = del_words_in_stop_pos(soy_words_dict, stop_pos)
-    model_dict['modeling'][2] = 'soynlp로 추출한 단어 중 명사가 아닌 단어 제거 후 단어 수: ' + str(len(soy_nouns_dict))
+    model_dict['modeling'][2] = 'soynlp로 추출한 단어 중 ~씨, 단위명사, 명사파생 접미사, 숫자+영어, 연결어미, 종결어미, 동사, 기호+숫자, 일반부사, 부사격조사 포함' \
+                                '단어 제거 후 단어 수: ' + str(len(soy_nouns_dict))
 
     # soynlp로 추출한 단어들 중 한글자는 제거
     soy_nouns_list = list(soy_nouns_dict.keys())
@@ -103,12 +147,7 @@ def flask_extract_nouns_list_week(train_preprocessed, article_one, cate, week, s
     print("=> soynlp 추출 명사 개수(한글자제거):", len(soy_nouns_temp1))
 
     # 사전 단어들과 비교
-    comp_corpus_new = [x for x in comp_corpus if pd.isnull(x) == False]
-    comp_str = ", ".join(comp_corpus_new)
-    no_dict_word_list = []
-    for noun in soy_nouns_temp1:
-        if comp_str.find(noun) == -1:  # 사전에서 못찾으면
-          no_dict_word_list.append(noun)  # 신조어 후보로 추가
+    no_dict_word_list = compare_dict_words(soy_nouns_temp1)
     model_dict['modeling'][4] = '사전 비교 후 사전에 있는 단어 제거 후 단어 수: ' + str(len(no_dict_word_list))
     print("=> 사전 비교 후 단어 수 :", len(no_dict_word_list))
 
@@ -130,8 +169,14 @@ def flask_extract_nouns_list_week(train_preprocessed, article_one, cate, week, s
     train_preprocessed_c['proper_nouns'] = train_preprocessed_c['proper_nouns'].fillna('')
     proper_nouns_dict = get_proper_nouns_dict(train_preprocessed_c, min_freq=10)
     proper_nouns_freq = del_words_in_stop_pos(proper_nouns_dict, stop_pos)
-    new_word_dict.update(proper_nouns_freq)
+
+    # 고유명사 사전 비교
+    no_dict_proper_list = compare_dict_words(list(proper_nouns_freq.keys()))
+    proper_nouns_result = {proper: proper_nouns_freq[proper] for proper in no_dict_proper_list}
+
+    new_word_dict.update(proper_nouns_result)
     model_dict['modeling'][6] = '기사 본문의 홑따옴표 내 단어로 추출한 고유명사 추가 후 단어 수: ' + str(len(new_word_dict))
+
 
     # 이전의 신조어 후보와 비교 후 포함되지 않은것만 추출
     df_new_words = pd.DataFrame(columns=['new_word', 'freq', 'ratio', 'category', 'week', 'date1', 'date2'])
@@ -145,16 +190,24 @@ def flask_extract_nouns_list_week(train_preprocessed, article_one, cate, week, s
             df_new_words = df_new_words.append(new_word_row, ignore_index=True)
 
     model_dict['modeling'][7] = '이전 추출 신조어와 비교 후 해당 카테고리 및 기간의 총 신조어 수: ' + str(len(df_new_words))
-    print('===> 이전 추출 신조어와 비교 후 해당 카테고리 및 기간의 총 신조어 수:', len(df_new_words), '<<<<<<<<')
+    print('=> 이전 추출 신조어와 비교 후 단어 수:', len(df_new_words), '<<<<<<<<')
+
+    # 불용어 제거
+    df_new_word_filter = filter(df_new_words)
+    model_dict['modeling'][8] = '불용어 처리 및 잘못 추출된 단어 적용 완료 후 단어 수 : ' + str(len(df_new_word_filter))
+    print(cate + ' 불용어 처리 및 잘못 추출된 단어 적용 완료 후 단어 수 : ' + str(len(df_new_word_filter)))
+    print('===> 이전 추출 신조어와 비교 후 해당 카테고리 및 기간의 총 신조어 수:', len(df_new_word_filter), '<<<<<<<<')
     print('--------------------------------------------------------')
 
     article_one.reset_index(drop=True, inplace=True)
     # 기사에 해당되는 단어만 추가
     new_word_list = []
-    for word in list(df_new_words['new_word']):
+    for word in list(df_new_word_filter['new_word']):
       if list(article_one['article'])[0].find(word) != -1:
           new_word_list.append(word)
-    model_dict['modeling'][8] = '입력 기사에서 추출된 신조어 수 : ' + str(len(new_word_list))
+    model_dict['modeling'][9] = '입력 기사에서 추출된 신조어 수 : ' + str(len(new_word_list))
+
+
     model_dict['new_words'] = new_word_list
 
     return model_dict
@@ -188,12 +241,7 @@ def extract_nouns_list_week(train_preprocessed, cate, week, stop_pos, comp_corpu
     print("=> soynlp 추출 명사 개수(한글자제거):", len(soy_nouns_temp1))
 
     # 사전 단어들과 비교
-    comp_corpus_new = [x for x in comp_corpus if pd.isnull(x) == False]
-    comp_str = ", ".join(comp_corpus_new)
-    no_dict_word_list = []
-    for noun in soy_nouns_temp1:
-        if comp_str.find(noun) == -1:  # 사전에서 못찾으면
-          no_dict_word_list.append(noun) # 신조어 후보로 추가
+    no_dict_word_list = compare_dict_words(soy_nouns_temp1)
     print("=> 사전 비교 후 단어 수 :", len(no_dict_word_list))
 
     # 단어가 등장한 기사수, 전체 전처리 기사수 대비 단어수를 딕셔너리 형태로 저장
@@ -211,16 +259,11 @@ def extract_nouns_list_week(train_preprocessed, cate, week, stop_pos, comp_corpu
     print("=> 빈도수 기준 추출 개수:", len(new_word_dict))
 
     # 전체 문서에서 빈도가 높은 고유명사와 빈도수 추출
-    train_preprocessed_c = train_preprocessed.copy()
-    train_preprocessed_c['proper_nouns'] = train_preprocessed_c['proper_nouns'].fillna('')
-    proper_nouns_dict = get_proper_nouns_dict(train_preprocessed_c, min_freq=10)
+    proper_nouns_dict = get_proper_nouns_dict(train_preprocessed, min_freq=10)
     proper_nouns_freq = del_words_in_stop_pos(proper_nouns_dict, stop_pos)
 
     # 고유명사 사전 비교
-    no_dict_proper_list = []
-    for noun in proper_nouns_freq.keys():
-        if comp_str.find(noun) == -1:  # 사전에서 못찾으면
-            no_dict_proper_list.append(noun)  # 신조어 후보로 추가
+    no_dict_proper_list = compare_dict_words(list(proper_nouns_freq.keys()))
     proper_nouns_result = { proper : proper_nouns_freq[proper] for proper in no_dict_proper_list }
     print("=> 고유명사 사전 비교 후 단어 수 :", len(proper_nouns_result))
 
@@ -231,15 +274,36 @@ def extract_nouns_list_week(train_preprocessed, cate, week, stop_pos, comp_corpu
 
     for new_word, freq_dict in new_word_dict.items():
         # 이전 신조어 리스트와 비교 후 걸러내기
-        # if new_word not in comp_corpus:
-          # 추출 단어 데이터 프레임화
-        new_word_row = pd.Series([new_word, freq_dict['freq'], freq_dict['ratio'], cate, week, date1, date2], index=df_new_words.columns)
-        df_new_words = df_new_words.append(new_word_row, ignore_index=True)
+        if new_word not in comp_corpus:
+            # 추출 단어 데이터 프레임화
+            new_word_row = pd.Series([new_word, freq_dict['freq'], freq_dict['ratio'], cate, week, date1, date2], index=df_new_words.columns)
+            df_new_words = df_new_words.append(new_word_row, ignore_index=True)
 
-    print('=> 이전 추출 신조어, 사전 비교 후 단어 수:', len(df_new_words), '<<<<<<<<')
+    print('=> 이전 추출 신조어와 비교 후 단어 수:', len(df_new_words), '<<<<<<<<')
     print('--------------------------------------------------------')
 
     return df_new_words
+
+
+# 사전이랑 비교하는 함수
+def compare_dict_words(nouns_list):
+    # 비교사전 로드
+    mecab_new_corpus = pd.read_csv("mecab_new_corpus.csv", encoding="cp949")
+    new_word_list_pre = list(mecab_new_corpus.단어.unique())
+    nia_dic = pd.read_csv('NIADic.csv', encoding='cp949')
+    nia_term_list = list(nia_dic.term.unique())
+    corpus_dic = list(set(new_word_list_pre + nia_term_list))
+
+    # 사전 단어들과 비교
+    corpus_dic_new = [x for x in corpus_dic if pd.isnull(x) == False]
+    comp_str = ', '+', '.join(corpus_dic_new)
+    no_dict_word_list = []
+    for noun in nouns_list:
+        if comp_str.find(', '+noun+', ') == -1: # 사전에 없으면
+            no_dict_word_list.append(noun)  # 신조어 후보로 추가
+    return no_dict_word_list
+
+
 
 
 # soy가 나온 기사 수 구하기
@@ -324,6 +388,7 @@ def del_words_in_stop_pos(words_freq_dict, stop_pos=['NNBC', 'NNG XSN', 'SN SL',
   mecab = Mecab(dicpath='C:/mecab/mecab-ko-dic')
   words_pos_temp = {word: mecab.pos(word) for word in words_freq_dict.keys()}  # word가 키, mecab 태깅 결과가 값
   words_pos = {word : pos for word, pos in words_pos_temp.items() if ('씨', 'NNB') not in pos}
+  print("=> 의존명사 ~'씨' 포함 단어 제거 후 단어 수 : ", len(words_pos))
 
   # 단어별로 모든 mecab pos결과 연결 (복합명사를 위해)
   pos_str_dict = dict()
@@ -343,6 +408,7 @@ def del_words_in_stop_pos(words_freq_dict, stop_pos=['NNBC', 'NNG XSN', 'SN SL',
         # 숫자만 있는 경우, -오프라인 이런 단어도 제거
         flag = 1
     isstop_dict[word] = flag
+  print('stop_pos : 단위명사, 명사파생 접미사, 숫자+영어, 연결어미, 종결어미, 동사, 기호+숫자, 일반부사, 부사격조사')
   print('=> stop_pos 포함 명사 수:', sum(isstop_dict.values()))
 
   # stop_pos 없는 데이터로 추가
