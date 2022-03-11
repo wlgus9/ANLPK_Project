@@ -8086,7 +8086,8 @@ a:focus {
 	color:#3a3b45!important
 }
 .delete-word {
-	color:#e74a3b!important
+	color:#e74a3b!important;
+	font-weight: bold;
 }
 
 .icon-circle {
