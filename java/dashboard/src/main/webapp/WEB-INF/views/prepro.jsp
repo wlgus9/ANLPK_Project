@@ -10,12 +10,12 @@
 <script src="//cdn.amcharts.com/lib/5/themes/Animated.js"></script>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	
+
 <script>
 	$(function() {
 		$("button[type = button]").click(
 				function() {
-					req_url = "http://localhost:5000/preprocess_article";
+					req_url = "http://localhost:5000/url_test";
 					var form = $("form")[0];
 					var form_data = new FormData(form);
 					$.ajax({
@@ -26,16 +26,16 @@
 						processData : false,
 						contentType : false,
 						success : function(data) {
-						
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
+							console.log(data);							
 							var prepro = new Array();
-							//var text = ["설명1", "설명2", "설명3", "설명4", "설명5", "설명6"];
+							//var description = ["설명1", "설명2", "설명3", "설명4", "설명5", "설명6"];
 							
 							$.each(data, function(key, value) {
 								prepro.push(value);
 							});
-	
+
 							function preproPrint(prepro) {
 								var y=1;
 								for (i = 2; i <prepro.length+2; i++) {
@@ -58,7 +58,7 @@
 											
 						},
 						error : function(e) {
-							alert();
+							alert(e);
 						}
 					})
 				})
@@ -67,8 +67,8 @@
 
 <script>
 
-		function modeling() {
-			req_url = "http://localhost:5000/get_new_words";
+		/* function modeling() {
+			req_url = "http://localhost:5000/url_test2";
 			var form = $("form")[0];
 			var form_data = new FormData(form);
 			$.ajax({
@@ -78,6 +78,12 @@
 				data : form_data,
 				processData : false,
 				contentType : false,
+				beforeSend: function(){
+			        $('#image').show();
+			    },
+			    complete: function(){
+			        $('#image').hide();
+			    },
 				success : function(data) {
 					
 					console.log(data);
@@ -131,8 +137,111 @@
 					alert();
 				}
 			})
+		} */
+		var test = new Array();
+		function modeling() {
+			req_url = "http://localhost:5000/url_test2";
+			var form = $("form")[0];
+			var form_data = new FormData(form);
+			$.ajax({
+				url : req_url,
+				async : true,
+				type : "POST",
+				data : form_data,
+				processData : false,
+				contentType : false,
+				success : function(data) {
+					
+					console.log(data);
+					$("#modelButton").empty();
+						
+					$("#result").append(data);
+					$("#result").append("<hr>");										
+					modeling2();
+						
+					
+					
+				},
+				error : function(e) {
+					alert();
+				}
+			})
 		}
-
+		
+		function modeling2() {
+			req_url = "http://localhost:5000/url_test3";
+			var form = $("form")[0];
+			var form_data = new FormData(form);
+			$.ajax({
+				url : req_url,
+				async : true,
+				type : "POST",
+				data : form_data,
+				processData : false,
+				contentType : false,
+				success : function(data) {
+					
+					console.log(data);
+					setTimeout(function() {
+						
+						$("#result").append(data);
+						$("#result").append("<hr>");										
+						modeling3();
+						
+					}, 1000);
+					
+				},
+				error : function(e) {
+					alert();
+				}
+			})
+		}
+		
+		function modeling3() {
+			req_url = "http://localhost:5000/url_test4";
+			var form = $("form")[0];
+			var form_data = new FormData(form);
+			$.ajax({
+				url : req_url,
+				async : true,
+				type : "POST",
+				data : form_data,
+				processData : false,
+				contentType : false,
+				success : function(data) {
+					
+					console.log(data);
+					setTimeout(function() {
+						
+						$("#result").append(data);
+						$("#result").append("<hr>");										
+						
+					}, 1500);
+					
+				},
+				error : function(e) {
+					alert();
+				}
+			})
+		}
+		
+		function modelingPrint(test) {
+			$("#modelButton").empty();
+			var y=1;
+			for (i = 2; i <modeling.length+2; i++) {
+				(function(x) {
+					setTimeout(function() {
+						
+						$("#result").append(test[x-2]);
+						$("#result").append("<hr>");										
+						
+					}, 1000 * x);
+				})(i);
+			}								
+		}
+		console.log(test);
+		//modelingPrint(test);
+		
 </script>
 
 
@@ -185,8 +294,15 @@
 						<table class="table table-bordered" id="dataTable" width="100%"
 							cellspacing="0">
 						</table>
-						<div id="result"></div>
+						
+						<div id="result">						
+							<!-- <div class="loading-container">
+    							<div class="loading"></div>
+							    <div id="loading-text">loading</div>
+							</div> -->
+						</div>
 						<div id="modelButton">
+							<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>
 						</div>
 					</div>
 				</div>
@@ -203,7 +319,7 @@
 		class="fas fa-angle-up"></i>
 	</a>
 
-	<!-- toJSON -->
+	<!— toJSON —>
 
 	<jsp:include page="includes/footer.jsp" />
 
