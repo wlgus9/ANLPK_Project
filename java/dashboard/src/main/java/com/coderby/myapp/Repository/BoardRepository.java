@@ -320,7 +320,7 @@ public class BoardRepository implements IBoardRepository {
 	@Override
 	public Object table() {
 		Bson projectionFields = Projections.fields(Projections.include("new_word", "freq", "category", "week", "date1", "date2"), Projections.excludeId());
-		MongoCursor<Document> cursor = c_wordlist.find(gte("freq", 50)).projection(projectionFields).iterator();
+		MongoCursor<Document> cursor = new_word_list.find(gte("freq", 10)).projection(projectionFields).iterator();
 		
 		
 		List<String> new_word = new ArrayList<String>();

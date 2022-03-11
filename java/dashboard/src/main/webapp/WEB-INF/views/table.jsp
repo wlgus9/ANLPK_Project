@@ -25,7 +25,7 @@
 
 					<!-- Page Heading -->
 					<p>
-					<h1 class="h3 mb-2 text-gray-800">Tables</h1>
+					<h1 class="h3 mb-2 text-gray-800">신조어 리스트</h1>
 					<p class="mb-4">
 						DataTables is a third party plugin that is used to generate the
 						demo table below. For more information about DataTables, please
@@ -36,8 +36,7 @@
 					<!-- DataTales Example -->
 					<div class="card shadow mb-4">
 						<div class="card-header py-3">
-							<h6 class="m-0 font-weight-bold text-primary">DataTables
-								Example</h6>
+							<h6 class="m-0 font-weight-bold text-primary">신조어 리스트</h6>
 						</div>
 						<div class="card-body">
 							<div class="table-responsive">
@@ -49,12 +48,11 @@
 											<th>빈도수</th>
 											<th>카테고리</th>
 											<th>단어가 등장한 주차</th>
-											<th>날짜</th>
-											<th>날짜</th>
+											<th>해당 주차의 시작 날짜</th>
+											<th>해당 주차의 끝 날짜</th>
 										</tr>
 									</thead>
 									<tbody>
-									
 										<c:forEach var="item" items="${table}">
 											<tr>
 												<td>${item[0]}</td>

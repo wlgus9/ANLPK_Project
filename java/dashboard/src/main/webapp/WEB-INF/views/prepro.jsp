@@ -43,17 +43,19 @@
 							$.each(data, function(key, value) {
 								prepro.push(value);
 							});
-
+							$("#result").append(prepro[0]);
+							$("#result").append("<hr>");
 							function preproPrint(prepro) {
 								var y=1;
 								for (i = 2; i <prepro.length+2; i++) {
 									(function(x, y) {
 										setTimeout(function() {
 											$("#result").empty();
-											$("#result").append(prepro[x-2]);
+											$("#result").append(prepro[x-1]);
 											$("#result").append("<hr>");
 											
 											if(x > prepro.length) {
+												$("#result").empty();
 												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>");	
 											}
 
@@ -75,7 +77,7 @@
 
 <script>
 
-		/* function modeling() {
+		function modeling() { 
 			req_url = "http://localhost:5000/url_test2";
 			var form = $("form")[0];
 			var form_data = new FormData(form);
@@ -87,38 +89,51 @@
 				processData : false,
 				contentType : false,
 				beforeSend: function(){
-			        $('#image').show();
+			        $('#lottie').show();
 			    },
 			    complete: function(){
-			        $('#image').hide();
+			        $('#lottie').hide();
 			    },
 				success : function(data) {
 					
 					console.log(data);
 					
 					// ----------------- 모델링 파트 JSON ----------------- 
-					var valueList = new Array();
-					var modelList = new Array();
-					var wordList = new Array();
-
-					$.each(data, function(key, value) {
-						console.log("valueList :: " + key, value);
-						valueList.push(value);
-					});
-
-					$.each(valueList[4], function(key, value) {
-						console.log("modelList :: " + value);
-						modelList.push(value);
-					});
-
-					for (i = 0; i < valueList[5].length; i++) {
-						console.log("wordList :: " + valueList[5][i]);
-						wordList.push(valueList[5][i]);
-					} 
-
-					valueList.splice(4, 2);
 					
-					var modeling = valueList.concat(modelList).concat(wordList);
+					var dateKey = ["date1", "date2"];
+					var wordKey = ["new_words"];
+					var modelKey = ["IT 1주차 기사, soynlp로 추출한 모든 명사 수",
+								   "조사 및 동사 등의 단어 제거",
+								   "soynlp로 추출한 단어 중 한글자 단어 제거 후 단어 수",
+								   "사전 비교 후 사전에 있는 단어 제거 후 단어 수",
+								   "신조어 등장 기사수 기준 상위 25% 단어 추출 후 단어 수",
+								   "기사 본문의 홑따옴표 내 단어로 추출한 고유명사 추가 후 단어 수",
+								   "이전 추출 신조어와 비교 후 해당 카테고리 및 기간의 총 신조어 수",
+								   "불용어 처리 및 잘못 추출된 단어 적용 완료 후 단어 수",
+								   "입력 기사에서 추출된 신조어 수"];
+					
+					
+					var dateValue = new Array();
+					var modelValue = new Array();
+					var wordValue = new Array();
+	
+					$.each(data, function(key, value) {
+						modelValue.push(value);
+					});
+					
+					for(i=0; i<modelValue[11].length; i++) {
+						wordValue.push(modelValue[11][i]);
+					}
+					
+					dateValue.push(modelValue.shift());
+					dateValue.push(modelValue.shift());
+					modelValue.pop();
+					
+					barChart(dateValue, modelKey, modelValue, wordValue);
+					
+					/* var modeling = valueList.concat(modelValue).concat(wordValue);
+					$("#result").append(modeling[0]);
+					$("#result").append("<hr>");
 					function modelingPrint(modeling) {
 						$("#modelButton").empty();
 						var y=1;
@@ -127,10 +142,10 @@
 								setTimeout(function() {
 									
 									if(x < 13) {
-										$("#result").append(modeling[x-2]);
+										$("#result").append(modeling[x-1]);
 										$("#result").append("<hr>");										
 									} else {
-										$("#result").append(modeling[x-2] + "&nbsp;");
+										$("#result").append(modeling[x-1] + "&nbsp;");
 									}
 									
 								}, 1000 * x);
@@ -138,117 +153,15 @@
 						}								
 					}
 					
-					modelingPrint(modeling);
+					modelingPrint(modeling); */
 					
 				},
 				error : function(e) {
-					alert();
-				}
-			})
-		} */
-		var test = new Array();
-		function modeling() {
-			req_url = "http://localhost:5000/url_test2";
-			var form = $("form")[0];
-			var form_data = new FormData(form);
-			$.ajax({
-				url : req_url,
-				async : true,
-				type : "POST",
-				data : form_data,
-				processData : false,
-				contentType : false,
-				success : function(data) {
-					
-					console.log(data);
-					$("#modelButton").empty();
-						
-					$("#result").append(data);
-					$("#result").append("<hr>");										
-					modeling2();
-						
-					
-					
-				},
-				error : function(e) {
-					alert();
+					alert(e);
 				}
 			})
 		}
 		
-		function modeling2() {
-			req_url = "http://localhost:5000/url_test3";
-			var form = $("form")[0];
-			var form_data = new FormData(form);
-			$.ajax({
-				url : req_url,
-				async : true,
-				type : "POST",
-				data : form_data,
-				processData : false,
-				contentType : false,
-				success : function(data) {
-					
-					console.log(data);
-					setTimeout(function() {
-						
-						$("#result").append(data);
-						$("#result").append("<hr>");										
-						modeling3();
-						
-					}, 1000);
-					
-				},
-				error : function(e) {
-					alert();
-				}
-			})
-		}
-		
-		function modeling3() {
-			req_url = "http://localhost:5000/url_test4";
-			var form = $("form")[0];
-			var form_data = new FormData(form);
-			$.ajax({
-				url : req_url,
-				async : true,
-				type : "POST",
-				data : form_data,
-				processData : false,
-				contentType : false,
-				success : function(data) {
-					
-					console.log(data);
-					setTimeout(function() {
-						
-						$("#result").append(data);
-						$("#result").append("<hr>");										
-						
-					}, 1500);
-					
-				},
-				error : function(e) {
-					alert();
-				}
-			})
-		}
-		
-		function modelingPrint(test) {
-			$("#modelButton").empty();
-			var y=1;
-			for (i = 2; i <modeling.length+2; i++) {
-				(function(x) {
-					setTimeout(function() {
-						
-						$("#result").append(test[x-2]);
-						$("#result").append("<hr>");										
-						
-					}, 1000 * x);
-				})(i);
-			}								
-		}
-		console.log(test);
-		//modelingPrint(test);
 		
 </script>
 
@@ -283,13 +196,29 @@
 							<form
 								class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
 								<div class="input-group">
-									<input type="text" class="form-control form-control-sm"
-										placeholder="Search for..." aria-label="Search"
-										aria-describedby="basic-addon2"
-										style="height: 38px; width: 500px;">
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button">
-											<i class="fas fa-search fa-sm"></i>
+										test1
+										</button>
+									</div>
+									<div class="input-group-append">
+										<button class="btn btn-primary" type="button">
+										test2
+										</button>
+									</div>
+									<div class="input-group-append">
+										<button class="btn btn-primary" type="button">
+										test3
+										</button>
+									</div>
+									<div class="input-group-append">
+										<button class="btn btn-primary" type="button">
+										test4
+										</button>
+									</div>
+									<div class="input-group-append">
+										<button class="btn btn-primary" type="button">
+										test5
 										</button>
 									</div>
 								</div>
@@ -304,15 +233,15 @@
 						</table>
 						
 						<div id="result">						
-							<!-- <div class="ajax-loader">
-							  <img src="{{ url('/Users/ewew_kkk/Downloads/file-transfer.gif') }}" class="img-responsive" />
-							</div> -->
 							<div id="lottie" align="center">
 								<lottie-player src="https://assets8.lottiefiles.com/packages/lf20_qp1q7mct.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>							
 							</div>
 						</div>
-						<div id="modelButton">
-							<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>
+						<div id="modelButton" name="modelButton"><input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input></div>
+						<div style="width:100%;">
+							<div id="dateValue" value="" style="text-align:center;"></div>
+							<canvas id="canvas" height="150"></canvas>
+							<div id="wordValue" value="" style="text-align:center;"></div>
 						</div>
 					</div>
 				</div>
@@ -337,4 +266,5 @@
 <script>
 $('#lottie').hide();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
 </html>
