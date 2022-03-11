@@ -341,8 +341,6 @@ public class BoardRepository implements IBoardRepository {
 			date2.add(doc.getString("date2"));
 		}
 		Object[][] arr = new Object[new_word.size()][6];
-		System.out.println(new_word.get(10));
-		
 		
 		for(int i=0; i<new_word.size(); i++) {
 			arr[i][0] = new_word.get(i);
