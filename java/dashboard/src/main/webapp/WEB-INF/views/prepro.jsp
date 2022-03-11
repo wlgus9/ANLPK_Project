@@ -8,8 +8,10 @@
 <script src="//cdn.amcharts.com/lib/5/index.js"></script>
 <script src="//cdn.amcharts.com/lib/5/percent.js"></script>
 <script src="//cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-<script
-	src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
 	$(function() {
@@ -25,6 +27,12 @@
 						data : form_data,
 						processData : false,
 						contentType : false,
+						beforeSend: function(){
+							$('#lottie').show();
+					    },
+					    complete: function(){
+					    	$('#lottie').hide();
+					    },
 						success : function(data) {
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
@@ -296,10 +304,12 @@
 						</table>
 						
 						<div id="result">						
-							<!-- <div class="loading-container">
-    							<div class="loading"></div>
-							    <div id="loading-text">loading</div>
+							<!-- <div class="ajax-loader">
+							  <img src="{{ url('/Users/ewew_kkk/Downloads/file-transfer.gif') }}" class="img-responsive" />
 							</div> -->
+							<div id="lottie" align="center">
+								<lottie-player src="https://assets8.lottiefiles.com/packages/lf20_qp1q7mct.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>							
+							</div>
 						</div>
 						<div id="modelButton">
 							<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>
@@ -324,5 +334,7 @@
 	<jsp:include page="includes/footer.jsp" />
 
 </body>
-
+<script>
+$('#lottie').hide();
+</script>
 </html>
