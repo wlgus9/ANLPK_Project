@@ -41,13 +41,6 @@ series.labels.template.setAll({
   cursorOverStyle: "pointer"
 });
 
-series.labels.template.events.on("click", function(ev) {
-  const category = ev.target.dataItem.get("category");
-  //window.open("https://stackoverflow.com/questions/tagged/" + encodeURIComponent(category));
-  //window.open("http://naver.com");
-  alert("hi");
-});
-
 // Data from:
 // https://insights.stackoverflow.com/survey/2021#section-most-popular-technologies-programming-scripting-and-markup-languages
 series.data.setAll(data);

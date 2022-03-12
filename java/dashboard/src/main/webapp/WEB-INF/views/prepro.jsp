@@ -151,13 +151,12 @@
 		<div class="container-fluid">
 
 			<!-- Page Heading -->
+			<br>
 			<p>
 			<h1 class="h3 mb-2 text-gray-800">전처리 과정</h1>
 			<p class="mb-4">
-				DataTables is a third party plugin that is used to generate the demo
-				table below. For more information about DataTables, please visit the
-				<a target="_blank" href="https://datatables.net">official
-					DataTables documentation</a>.
+				기사 원문이 전처리 되는 과정을 순차적으로 보여드리는 페이지입니다.<br>
+				전처리가 완료된 후에는 모델링 버튼을 통해 신조어가 추출되는 과정을 차트로 확인할 수 있습니다.
 			</p>
 
 			<!-- DataTales Example -->
@@ -209,7 +208,7 @@
 								<lottie-player src="https://assets8.lottiefiles.com/packages/lf20_qp1q7mct.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>							
 							</div>
 						</div>
-						<div id="modelButton" name="modelButton"><input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input></div>
+						<div id="modelButton" name="modelButton"></div>
 						<div style="width:100%;">
 							<div id="dateValue" value="" style="text-align:center;"></div>
 							<canvas id="canvas" height="150"></canvas>

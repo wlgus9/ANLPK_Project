@@ -24,13 +24,11 @@
 				<div class="container-fluid">
 
 					<!-- Page Heading -->
+					<br>
 					<p>
 					<h1 class="h3 mb-2 text-gray-800">신조어 리스트</h1>
 					<p class="mb-4">
-						DataTables is a third party plugin that is used to generate the
-						demo table below. For more information about DataTables, please
-						visit the <a target="_blank" href="https://datatables.net">official
-							DataTables documentation</a>.
+						프로젝트 기간 동안 추출한 신조어입니다. 
 					</p>
 
 					<!-- DataTales Example -->
@@ -44,7 +42,7 @@
 									cellspacing="0">
 									<thead>
 										<tr>
-											<th>신조어</th>
+											<th style="width:250px;">신조어</th>
 											<th>빈도수</th>
 											<th>카테고리</th>
 											<th>단어가 등장한 주차</th>

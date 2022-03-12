@@ -44,8 +44,12 @@ series.labels.template.setAll({
 
 series.labels.template.events.on("click", function(ev) {
 	const category = ev.target.dataItem.get("category");
+	$("#title").empty();
+	$("#con").empty();
+	var title = document.getElementById('title');
+	title.insertAdjacentHTML('afterbegin', category);
 	
-	var req_url = "http://localhost:5000/url_test3";
+	var req_url = "http://localhost:5000/url_test3/" + category;
 	$.ajax({
 		url: req_url,
 		async: true,
@@ -61,21 +65,29 @@ series.labels.template.events.on("click", function(ev) {
 				json.push(value);
 			});
 
-
 			function openModal(modalname) {
+				
 				document.get
 				$("#modal").fadeIn(300);
 				$("." + modalname).fadeIn(300);
-				document.getElementById("con").innerHTML = json;
+				
+				if(data.length == 0) {
+					document.getElementById("con").innerHTML = "해당 신조어와 유사한 단어가 존재하지 않습니다.";					
+				} else {
+					for(i=0; i<json.length; i++) {
+						var a = i+1 + ". " + json[i] + "<br>";
+						var b = document.getElementById("con");
+						b.innerHTML = b.innerHTML + a;
+					}
+				}
 			}
 			openModal("modal1");
 
 			$("#modal, .close").on('click', function() {
 				$("#modal").fadeOut(300);
 				$(".modal-con").fadeOut(300);
+				
 			});
-			
-
 
 		},
 		error: function(e) {

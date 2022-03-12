@@ -37,8 +37,9 @@
 	height
 	:
 	330px;
+	}
 }
-}
+.amcharts-chart-div a {display:none !important;}
 </style>
 
 <style>

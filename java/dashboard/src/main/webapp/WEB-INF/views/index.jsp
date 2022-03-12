@@ -8,27 +8,32 @@
 
 <style>
 *{margin:0; padding:0;}
-a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#fff; background:#000; margin:20px;}
 #modal{
   display:none;
   position:fixed; 
   width:100%; height:100%;
   top:0; left:0; 
   background:rgba(0,0,0,0.3);
+  box-shadow: 0 25px 40px -20px #3c4a56;
 }
 .modal-con{
   display:none;
   position:fixed;
   top:50%; left:50%;
   transform: translate(-50%,-50%);
-  max-width: 60%;
+  max-width: 90%;
+  min-width: 200px;
   min-height: 30%;
   background:#fff;
+  border-radius: 5px;
 }
-.modal-con .title{
+.modal-con #title{
   font-size:20px; 
-  padding: 20px; 
-  background : gold;
+  padding: 10px; 
+  background : #9ADCFF;
+  border-top-left-radius : 5px;
+  border-top-right-radius : 5px;
+  text-align: center;
 }
 .modal-con .con{
   font-size:15px; line-height:1.3;
@@ -37,13 +42,18 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 .modal-con .close{
   display:block;
   position:absolute;
-  width:30px; height:30px;
-  border-radius:50%; 
-  border: 3px solid #000;
-  text-align:center; line-height: 30px;
-  text-decoration:none;
-  color:#000; font-size:20px; font-weight: bold;
-  right:10px; top:10px;
+  border: 0;
+  background: #9ADCFF;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  line-height: 1;
+  right:10px;
+  bottom:10px;
+}
+#con {
+	margin-left:10px;
+	margin-right:10px;
 }
 </style>
 
@@ -53,9 +63,6 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 	<div id="wrapper">
 
 		<jsp:include page="includes/side-bar.jsp" />
-
-		<!-- Content Wrapper -->
-		<div id="content-wrapper" class="d-flex flex-column">
 
 			<!-- Main Content -->
 			<div id="content">
@@ -188,7 +195,7 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 
 						<!-- Pie Chart -->
 						<div class="col-xl-4 col-lg-5">
-							<div class="card shadow mb-4">
+							<div class="card shadow mb-4" style="height: 414.2px;">
 								<!-- Card Header - Dropdown -->
 								<div
 									class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -312,7 +319,7 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 
 						<!-- Pie Chart -->
 						<div class="col-xl-4 col-lg-5">
-							<div class="card shadow mb-4">
+							<div class="card shadow mb-4" style="height: 414.2px;">
 								<!-- Card Header - Dropdown -->
 								<div
 									class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -399,7 +406,7 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 
 						<!-- Pie Chart -->
 						<div class="col-xl-4 col-lg-5">
-							<div class="card shadow mb-4">
+							<div class="card shadow mb-4" style="height: 414.2px;">
 								<!-- Card Header - Dropdown -->
 								<div
 									class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -421,12 +428,12 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 						</div>
 						
 						<!-- Area Chart -->
-						<div class="col-xl-8 col-lg-7">
+						<div class="col-xl-12 col-lg-12">
 							<div class="card shadow mb-4">
 								<!-- Card Header - Dropdown -->
 								<div
 									class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-									<h6 class="m-0 font-weight-bold text-primary">최종 신조어</h6>
+									<h6 class="m-0 font-weight-bold text-primary">기사에 20번 이상 나타난 신조어 (단어를 클릭하면 유사한 단어를 확인할 수 있습니다.)</h6>
 								</div>
 								<!-- Card Body -->
 								<div class="card-body">
@@ -436,11 +443,9 @@ a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#
 										<input type="hidden" value="javascript:openModal('modal1')" class="button modal-open">
 										<div id="modal"></div>
 										  <div class="modal-con modal1">
+										    <p id="title"></p>
+										    <div id="con"></div>
 										    <a href="javascript:;" class="close">X</a>
-										    <p class="title">제목</p>
-										    <div id="con">
-										      
-										    </div>
 										  </div>
 									</div>
 								</div>
