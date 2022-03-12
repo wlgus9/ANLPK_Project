@@ -354,4 +354,29 @@ public class BoardRepository implements IBoardRepository {
 		return arr;
 	}
 
+	@Override
+	public List<String> wordCloud2() {
+
+		Bson projectionFields = Projections.fields(Projections.include("new_word", "freq"), Projections.excludeId());
+		MongoCursor<Document> cursor = new_word_list.find(gte("freq", 20)).projection(projectionFields).iterator();
+
+		List<String> word = new ArrayList<String>();
+		Document doc = new Document();
+
+		try {
+			while (cursor.hasNext()) {				
+				doc = cursor.next();
+				word.add(doc.toJson());
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+		    cursor.close();
+		}
+
+		System.out.println(word);
+		
+		return word;
+	}
+	
 }

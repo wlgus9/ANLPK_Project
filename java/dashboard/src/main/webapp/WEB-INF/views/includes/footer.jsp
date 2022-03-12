@@ -34,5 +34,6 @@
 	<script src="js/demo/chart-pareto-new-word.js"></script>	
 	<script src="js/demo/datatables-demo.js"></script>
 	<script src="js/demo/chart-wordCloud.js"></script>
+	<script src="js/demo/chart-wordCloud2.js"></script>
 
 </html>

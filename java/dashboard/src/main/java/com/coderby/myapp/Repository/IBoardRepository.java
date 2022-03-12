@@ -20,4 +20,5 @@ public interface IBoardRepository {
 	List<String> newWordListWeekCount();
 	Map<String, Object> category3();
 	Object table();
+	List<String> wordCloud2();
 }

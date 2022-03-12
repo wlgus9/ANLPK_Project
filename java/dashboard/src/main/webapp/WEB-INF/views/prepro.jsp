@@ -100,8 +100,7 @@
 					
 					// ----------------- 모델링 파트 JSON ----------------- 
 					
-					var dateKey = ["date1", "date2"];
-					var wordKey = ["new_words"];
+					var dateValue = new Array();
 					var modelKey = ["IT 1주차 기사, soynlp로 추출한 모든 명사 수",
 								   "조사 및 동사 등의 단어 제거",
 								   "soynlp로 추출한 단어 중 한글자 단어 제거 후 단어 수",
@@ -111,9 +110,6 @@
 								   "이전 추출 신조어와 비교 후 해당 카테고리 및 기간의 총 신조어 수",
 								   "불용어 처리 및 잘못 추출된 단어 적용 완료 후 단어 수",
 								   "입력 기사에서 추출된 신조어 수"];
-					
-					
-					var dateValue = new Array();
 					var modelValue = new Array();
 					var wordValue = new Array();
 	
@@ -130,30 +126,6 @@
 					modelValue.pop();
 					
 					barChart(dateValue, modelKey, modelValue, wordValue);
-					
-					/* var modeling = valueList.concat(modelValue).concat(wordValue);
-					$("#result").append(modeling[0]);
-					$("#result").append("<hr>");
-					function modelingPrint(modeling) {
-						$("#modelButton").empty();
-						var y=1;
-						for (i = 2; i <modeling.length+2; i++) {
-							(function(x) {
-								setTimeout(function() {
-									
-									if(x < 13) {
-										$("#result").append(modeling[x-1]);
-										$("#result").append("<hr>");										
-									} else {
-										$("#result").append(modeling[x-1] + "&nbsp;");
-									}
-									
-								}, 1000 * x);
-							})(i);
-						}								
-					}
-					
-					modelingPrint(modeling); */
 					
 				},
 				error : function(e) {
@@ -241,8 +213,8 @@
 						<div style="width:100%;">
 							<div id="dateValue" value="" style="text-align:center;"></div>
 							<canvas id="canvas" height="150"></canvas>
-							<div id="wordValue" value="" style="text-align:center;"></div>
 						</div>
+						<div id="wordValue" value="" style="text-align:center; color:red;"></div>
 					</div>
 				</div>
 			</div>

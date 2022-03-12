@@ -2,11 +2,23 @@ function barChart(dateValue, modelKey, modelValue, wordValue) {
 	document.getElementById("dateValue").innerHTML = "<b>" + dateValue[0] + " ~ " + dateValue[1] + "</b>";
 
 	console.log(wordValue.length);
-
-	for(i=0; i<wordValue.length; i++) {		
-		document.getElementById("wordValue").innerHTML = "<b>" + wordValue[i] + "</b>&nbsp";
-	}
 	
+	if(wordValue.length==0) {
+		document.getElementById("wordValue").innerHTML = "<b>추출된 신조어가 없습니다.<b>";
+	} else {
+		for(i=0; i<wordValue.length; i++) {
+			if(i==wordValue.length-1) {
+				var a = "<b>" + wordValue[i] + "</b>";
+				var b = document.getElementById("wordValue");
+				b.innerHTML = b.innerHTML + a;
+			} else {
+				var a = "<b>" + wordValue[i] + "</b>" + ", ";
+				var b = document.getElementById("wordValue");
+				b.innerHTML = b.innerHTML + a;
+			}		
+		}
+	}
+
 	new Chart(document.getElementById("canvas"), {
     type: 'horizontalBar',
     data: {
@@ -31,6 +43,11 @@ function barChart(dateValue, modelKey, modelValue, wordValue) {
 		      'rgb(153, 102, 255)',
 		      'rgb(201, 203, 207)']
         }]
+    },
+    options: {
+       legend: {
+           display: false
+        }
     }
 });	
 }

@@ -6,6 +6,47 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+*{margin:0; padding:0;}
+a.button{display:inline-block; padding: 10px 20px; text-decoration:none; color:#fff; background:#000; margin:20px;}
+#modal{
+  display:none;
+  position:fixed; 
+  width:100%; height:100%;
+  top:0; left:0; 
+  background:rgba(0,0,0,0.3);
+}
+.modal-con{
+  display:none;
+  position:fixed;
+  top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  max-width: 60%;
+  min-height: 30%;
+  background:#fff;
+}
+.modal-con .title{
+  font-size:20px; 
+  padding: 20px; 
+  background : gold;
+}
+.modal-con .con{
+  font-size:15px; line-height:1.3;
+  padding: 30px;
+}
+.modal-con .close{
+  display:block;
+  position:absolute;
+  width:30px; height:30px;
+  border-radius:50%; 
+  border: 3px solid #000;
+  text-align:center; line-height: 30px;
+  text-decoration:none;
+  color:#000; font-size:20px; font-weight: bold;
+  right:10px; top:10px;
+}
+</style>
+
 <body id="page-top">
 
 	<!-- Page Wrapper -->
@@ -244,24 +285,6 @@
 								</div>
 							</div>
 						</div>
-
-						<!--Pending Requests Card Example
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
 					</div>
 
 					<!-- Content Row -->
@@ -276,7 +299,6 @@
 									class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
 									<h6 class="m-0 font-weight-bold text-primary">전처리 후 가장 많이
 										나온 신조어 후보군</h6>
-									
 								</div>
 								<!-- Card Body -->
 								<div class="card-body">
@@ -393,6 +415,33 @@
 											class="chartjs-render-monitor"></canvas>
 										<input type="hidden" value='${map3.label}' id="label3">
 										<input type="hidden" value='${map3.count}' id="count3">
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<!-- Area Chart -->
+						<div class="col-xl-8 col-lg-7">
+							<div class="card shadow mb-4">
+								<!-- Card Header - Dropdown -->
+								<div
+									class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+									<h6 class="m-0 font-weight-bold text-primary">최종 신조어</h6>
+								</div>
+								<!-- Card Body -->
+								<div class="card-body">
+									<div class="chart-area">
+										<div id=chartdiv3></div>
+										<input type="hidden" value='${wordCloud2}' id="wordCloud2">
+										<input type="hidden" value="javascript:openModal('modal1')" class="button modal-open">
+										<div id="modal"></div>
+										  <div class="modal-con modal1">
+										    <a href="javascript:;" class="close">X</a>
+										    <p class="title">제목</p>
+										    <div id="con">
+										      
+										    </div>
+										  </div>
 									</div>
 								</div>
 							</div>

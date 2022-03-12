@@ -20,5 +20,5 @@ public interface IBoardService {
 	List<String> newWordListWeekCount();
 	Map<String, Object> category3();
 	Object table();
-	
+	List<String> wordCloud2();
 }

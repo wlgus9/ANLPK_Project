@@ -128,4 +128,12 @@ public class BoardService implements IBoardService {
 		return table;
 	}
 
+	@Override
+	public List<String> wordCloud2() {
+		
+		List<String> wordCloud2 = boardRepository.wordCloud2();
+		
+		return wordCloud2;
+	}
+	
 }

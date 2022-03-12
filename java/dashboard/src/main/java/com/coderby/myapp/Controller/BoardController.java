@@ -80,6 +80,10 @@ public class BoardController {
 		Map<String, Object> map3 = boardService.category3();
 		model.addAttribute("map3", map3);
 
+		// 신조어 워드 클라우드
+		List<String> wordCloud2 = boardService.wordCloud2();
+		model.addAttribute("wordCloud2", wordCloud2);
+		
 		return "index";
 	}
 

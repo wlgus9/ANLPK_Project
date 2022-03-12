@@ -47,6 +47,12 @@
 	height: 95vh;
 }
 </style>
+<style>
+#chartdiv3 {
+	width: 100%;
+	height: 95vh;
+}
+</style>
 
 <style>
 #newWord {
