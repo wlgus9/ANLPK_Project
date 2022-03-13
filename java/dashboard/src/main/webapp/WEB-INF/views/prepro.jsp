@@ -17,7 +17,7 @@
 	$(function() {
 		$("button[type = button]").click(
 				function() {
-					req_url = "http://localhost:5000/url_test";
+					req_url = "http://localhost:5000/preprocess_article";
 					var form = $("form")[0];
 					var form_data = new FormData(form);
 					$.ajax({
@@ -27,12 +27,6 @@
 						data : form_data,
 						processData : false,
 						contentType : false,
-						beforeSend: function(){
-							$('#lottie').show();
-					    },
-					    complete: function(){
-					    	$('#lottie').hide();
-					    },
 						success : function(data) {
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
@@ -78,7 +72,7 @@
 <script>
 
 		function modeling() { 
-			req_url = "http://localhost:5000/url_test2";
+			req_url = "http://localhost:5000/get_new_words";
 			var form = $("form")[0];
 			var form_data = new FormData(form);
 			$.ajax({
@@ -204,12 +198,12 @@
 						</table>
 						
 						<div id="result">						
-							<div id="lottie" align="center">
-								<lottie-player src="https://assets8.lottiefiles.com/packages/lf20_qp1q7mct.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>							
-							</div>
 						</div>
 						<div id="modelButton" name="modelButton"></div>
 						<div style="width:100%;">
+							<div id="lottie" align="center">
+								<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_mbrocy0r.json"  background="transparent"  speed="1"  style="width: 500px; height: 500px;"  loop  autoplay></lottie-player>							
+							</div>
 							<div id="dateValue" value="" style="text-align:center;"></div>
 							<canvas id="canvas" height="150"></canvas>
 						</div>
