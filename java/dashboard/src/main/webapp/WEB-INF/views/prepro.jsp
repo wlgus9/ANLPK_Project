@@ -14,10 +14,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 <script>
-	$(function() {
-		$("button[type = button]").click(
-				function() {
-					req_url = "http://localhost:5000/url_test";
+				function prepro(newsUrl) {
+			
+					req_url = "http://localhost:5000/url_test/" + newsUrl;
 					var form = $("form")[0];
 					var form_data = new FormData(form);
 					$.ajax({
@@ -66,8 +65,8 @@
 							alert(e);
 						}
 					})
-				})
-	})
+				}
+
 </script>
 
 <script>
@@ -175,27 +174,27 @@
 								class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100">
 								<div class="input-group">
 									<div class="input-group-append">
-										<button class="btn btn-primary" type="button">
+										<button class="btn btn-primary" type="button" onclick="prepro('E8WGPEJgoh')">
 										전처리 과정 (1)
 										</button>
 									</div>
 									<div class="input-group-append">
-										<button class="btn btn-primary" type="button">
+										<button class="btn btn-primary" type="button" onclick="prepro('EoKIeCpkAN')">
 										전처리 과정 (2)
 										</button>
 									</div>
 									<div class="input-group-append">
-										<button class="btn btn-primary" type="button">
+										<button class="btn btn-primary" type="button" onclick="prepro('Ewt0HkkfhO')">
 										전처리 과정 (3)
 										</button>
 									</div>
 									<div class="input-group-append">
-										<button class="btn btn-primary" type="button">
+										<button class="btn btn-primary" type="button" onclick="prepro('EHvxRyMXKN')">
 										전처리 과정 (4)
 										</button>
 									</div>
 									<div class="input-group-append">
-										<button class="btn btn-primary" type="button">
+										<button class="btn btn-primary" type="button" onclick="prepro('ELgYKhPwjR')">
 										전처리 과정 (5)
 										</button>
 									</div>
