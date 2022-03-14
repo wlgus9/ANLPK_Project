@@ -36,6 +36,11 @@
 								prepro.push(value);
 							});
 							
+							$("#dateValue").empty();
+							$("#wordValue").empty();
+							var canvas = document.getElementById("canvas");
+							canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+
 							$("#result").empty();
 							$("#result").append(prepro[0]);
 							$("#result").append("<hr>");
@@ -52,17 +57,13 @@
 											if(x==prepro.length) {
 												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling(" + 'newsUrl' + ")>");
 												$("#modelButton").append("<input type='hidden' id='newsUrl' value='" + newsUrl + "'>");
-
 											}
 											
 										}, 3000 * (x-y));
 									})(i, y);
 								}
 							}
-														
 							preproPrint(prepro);
-							
-											
 						},
 						error : function(e) {
 							alert(e);
@@ -179,27 +180,27 @@
 								<div class="input-group">
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button" onclick="prepro('E8WGPEJgoh')">
-										전처리 과정 (1)
+										전처리 (1)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button" onclick="prepro('EoKIeCpkAN')">
-										전처리 과정 (2)
+										전처리 (2)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button" onclick="prepro('Ewt0HkkfhO')">
-										전처리 과정 (3)
+										전처리 (3)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button" onclick="prepro('EHvxRyMXKN')">
-										전처리 과정 (4)
+										전처리 (4)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button" onclick="prepro('ELgYKhPwjR')">
-										전처리 과정 (5)
+										전처리 (5)
 										</button>
 									</div>
 								</div>
