@@ -1,6 +1,6 @@
 function barChart(cate, dateValue, modelKey, modelValue, wordValue) {
 	document.getElementById("dateValue").innerHTML = "<b>" + cate[0] + " 분야의 " + cate[1] + " 기사 (총 " + modelValue[0] + "개)</b><br>" + "<b>" + dateValue[0] + " ~ " + dateValue[1] + "</b>";
-	
+	document.getElementById("wordValue").innerHTML = "<b>입력된 기사에서의 최종 신조어<b><br>";
 	modelValue.shift();
 	
 	if(wordValue.length==0) {
@@ -8,11 +8,11 @@ function barChart(cate, dateValue, modelKey, modelValue, wordValue) {
 	} else {
 		for(i=0; i<wordValue.length; i++) {
 			if(i==wordValue.length-1) {
-				var a = "<b> 입력된 기사에서의 최종 신조어 : " + wordValue[i] + "</b>";
+				var a = "<b>" + wordValue[i] + "</b>";
 				var b = document.getElementById("wordValue");
 				b.innerHTML = b.innerHTML + a;
 			} else {
-				var a = "<b> 입력된 기사에서의 최종 신조어 : " + wordValue[i] + "</b>" + ", ";
+				var a = "<b>" + wordValue[i] + "</b>" + ", ";
 				var b = document.getElementById("wordValue");
 				b.innerHTML = b.innerHTML + a;
 			}		

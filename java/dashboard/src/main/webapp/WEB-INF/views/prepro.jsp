@@ -17,7 +17,7 @@
 	$(function() {
 		$("button[type = button]").click(
 				function() {
-					req_url = "http://localhost:5000/preprocess_article";
+					req_url = "http://localhost:5000/url_test";
 					var form = $("form")[0];
 					var form_data = new FormData(form);
 					$.ajax({
@@ -32,46 +32,34 @@
 							
 							console.log(data);							
 							var prepro = new Array();
-							var description = ["한글 비중이 30% 이하인 기사 제거 (영문 기사 Target)",
-											   "이메일 제거 (정규표현식)",
-											   "기자 이름 제거 (정규표현식)",
-											   "기자 이름 제거 (컬럼 이용)",
-											   "지역 + 언론사 제거 (정규 표현식)",
-											   "홑 따옴표 안의 문자열 처리",
-											   "특수 문자 제거 (정규 표현식)",
-											   "언론사 제거 (컬럼 이용)",
-											   "한 음절 글자 제거",
-											   "숫자만 있는 글자 제거",
-											   "숫자 + 글자 제거"];
 							
 							$.each(data, function(key, value) {
 								prepro.push(value);
 							});
 							
-							$("#result").append("<b>" + description[0] + "</b><br>");
 							$("#result").append(prepro[0]);
 							$("#result").append("<hr>");
+							
 							function preproPrint(prepro) {
 								var y=1;
-								for (i = 2; i <prepro.length+2; i++) {
+								for (i = 2; i <prepro.length+1; i++) {
 									(function(x, y) {
 										setTimeout(function() {
 											$("#result").empty();
-											$("#result").append("<b>" + description[x-1] + "</b><br>");
 											$("#result").append(prepro[x-1]);
 											$("#result").append("<hr>");
 											
-											if(x > prepro.length) {
-												$("#result").empty();
-												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>");	
+											if(x==prepro.length) {												
+												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>");
 											}
-
+											
 										}, 3000 * (x-y));
 									})(i, y);
-								}								
+								}
 							}
 														
 							preproPrint(prepro);
+							
 											
 						},
 						error : function(e) {
@@ -84,8 +72,12 @@
 
 <script>
 
-		function modeling() { 
-			req_url = "http://localhost:5000/get_new_words";
+		function modeling() {
+			
+			$("#result").empty();
+			$("#modelButton").empty();
+			
+			req_url = "http://localhost:5000/url_test2";
 			var form = $("form")[0];
 			var form_data = new FormData(form);
 			$.ajax({
@@ -115,8 +107,7 @@
 								   "신조어 등장 기사수 기준 상위 25% 단어 추출 후 단어 수",
 								   "기사 본문의 홑따옴표 내 단어로 추출한 고유명사 추가 후 단어 수",
 								   "이전 추출 신조어와 비교 후 해당 카테고리 및 기간의 총 신조어 수",
-								   "불용어 처리 및 잘못 추출된 단어 적용 완료 후 단어 수",
-								   "입력 기사에서 추출된 신조어 수"];
+								   "불용어 처리 및 잘못 추출된 단어 적용 완료 후 단어 수"];
 					var modelValue = new Array();
 					var wordValue = new Array();
 	
@@ -132,6 +123,7 @@
 					cate.push(modelValue.shift());
 					dateValue.push(modelValue.shift());
 					dateValue.push(modelValue.shift());
+					modelValue.pop();
 					modelValue.pop();
 					
 					console.log(cate)
@@ -221,7 +213,7 @@
 						<div id="result">						
 
 						</div>
-						<div id="modelButton" name="modelButton"><input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input></div>
+						<div id="modelButton" name="modelButton"></div>
 						<div style="width:100%;">
 							<div id="lottie" align="center">
 								<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_mbrocy0r.json"  background="transparent"  speed="1"  style="width: 500px; height: 500px;"  loop  autoplay></lottie-player>							
