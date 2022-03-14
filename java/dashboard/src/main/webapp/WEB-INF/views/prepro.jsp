@@ -111,7 +111,6 @@
 					var dateValue = new Array();
 					var modelKey = ["soynlp로 추출한 모든 명사 수",
 								   "조사 및 동사 등의 단어 제거",
-								   "soynlp로 추출한 단어 중 한글자 단어 제거 후 단어 수",
 								   "사전 비교 후 사전에 있는 단어 제거 후 단어 수",
 								   "신조어 등장 기사수 기준 상위 25% 단어 추출 후 단어 수",
 								   "기사 본문의 홑따옴표 내 단어로 추출한 고유명사 추가 후 단어 수",
@@ -220,14 +219,9 @@
 						</table>
 						
 						<div id="result">						
-<<<<<<< HEAD
-							<div id="lottie" align="center">
-								<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_mbrocy0r.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>							
-							</div>
-=======
->>>>>>> branch 'main' of https://github.com/Nohyunjin/ANLPK_Project.git
+
 						</div>
-						<div id="modelButton" name="modelButton"></div>
+						<div id="modelButton" name="modelButton"><input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input></div>
 						<div style="width:100%;">
 							<div id="lottie" align="center">
 								<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_mbrocy0r.json"  background="transparent"  speed="1"  style="width: 500px; height: 500px;"  loop  autoplay></lottie-player>							

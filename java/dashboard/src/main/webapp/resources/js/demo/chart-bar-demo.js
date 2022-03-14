@@ -8,11 +8,11 @@ function barChart(cate, dateValue, modelKey, modelValue, wordValue) {
 	} else {
 		for(i=0; i<wordValue.length; i++) {
 			if(i==wordValue.length-1) {
-				var a = "<b> 추출된 최종 신조어 : " + wordValue[i] + "</b>";
+				var a = "<b> 입력된 기사에서의 최종 신조어 : " + wordValue[i] + "</b>";
 				var b = document.getElementById("wordValue");
 				b.innerHTML = b.innerHTML + a;
 			} else {
-				var a = "<b> 추출된 최종 신조어 : " + wordValue[i] + "</b>" + ", ";
+				var a = "<b> 입력된 기사에서의 최종 신조어 : " + wordValue[i] + "</b>" + ", ";
 				var b = document.getElementById("wordValue");
 				b.innerHTML = b.innerHTML + a;
 			}		
