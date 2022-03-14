@@ -49,7 +49,7 @@ series.labels.template.events.on("click", function(ev) {
 	var title = document.getElementById('title');
 	title.insertAdjacentHTML('afterbegin', category);
 	
-	var req_url = "http://localhost:5000/url_test3/" + category;
+	var req_url = "http://localhost:5000/get_similar_words/" + category;
 	$.ajax({
 		url: req_url,
 		async: true,

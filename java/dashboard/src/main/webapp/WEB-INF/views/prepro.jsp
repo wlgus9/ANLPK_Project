@@ -27,22 +27,28 @@
 						data : form_data,
 						processData : false,
 						contentType : false,
-						beforeSend: function(){
-							$('#lottie').show();
-					    },
-					    complete: function(){
-					    	$('#lottie').hide();
-					    },
 						success : function(data) {
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
 							console.log(data);							
 							var prepro = new Array();
-							//var description = ["설명1", "설명2", "설명3", "설명4", "설명5", "설명6"];
+							var description = ["한글 비중이 30% 이하인 기사 제거 (영문 기사 Target)",
+											   "이메일 제거 (정규표현식)",
+											   "기자 이름 제거 (정규표현식)",
+											   "기자 이름 제거 (컬럼 이용)",
+											   "지역 + 언론사 제거 (정규 표현식)",
+											   "홑 따옴표 안의 문자열 처리",
+											   "특수 문자 제거 (정규 표현식)",
+											   "언론사 제거 (컬럼 이용)",
+											   "한 음절 글자 제거",
+											   "숫자만 있는 글자 제거",
+											   "숫자 + 글자 제거"];
 							
 							$.each(data, function(key, value) {
 								prepro.push(value);
 							});
+							
+							$("#result").append("<b>" + description[0] + "</b><br>");
 							$("#result").append(prepro[0]);
 							$("#result").append("<hr>");
 							function preproPrint(prepro) {
@@ -51,6 +57,7 @@
 									(function(x, y) {
 										setTimeout(function() {
 											$("#result").empty();
+											$("#result").append("<b>" + description[x-1] + "</b><br>");
 											$("#result").append(prepro[x-1]);
 											$("#result").append("<hr>");
 											
@@ -100,8 +107,9 @@
 					
 					// ----------------- 모델링 파트 JSON ----------------- 
 					
+					var cate = new Array();
 					var dateValue = new Array();
-					var modelKey = ["IT 1주차 기사, soynlp로 추출한 모든 명사 수",
+					var modelKey = ["soynlp로 추출한 모든 명사 수",
 								   "조사 및 동사 등의 단어 제거",
 								   "soynlp로 추출한 단어 중 한글자 단어 제거 후 단어 수",
 								   "사전 비교 후 사전에 있는 단어 제거 후 단어 수",
@@ -121,11 +129,19 @@
 						wordValue.push(modelValue[11][i]);
 					}
 					
+					cate.push(modelValue.shift());
+					cate.push(modelValue.shift());
 					dateValue.push(modelValue.shift());
 					dateValue.push(modelValue.shift());
 					modelValue.pop();
 					
-					barChart(dateValue, modelKey, modelValue, wordValue);
+					console.log(cate)
+					console.log(dateValue)
+					console.log(modelKey)
+					console.log(modelValue)
+					console.log(wordValue)
+					
+					barChart(cate, dateValue, modelKey, modelValue, wordValue);
 					
 				},
 				error : function(e) {
@@ -169,27 +185,27 @@
 								<div class="input-group">
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button">
-										test1
+										전처리 과정 (1)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button">
-										test2
+										전처리 과정 (2)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button">
-										test3
+										전처리 과정 (3)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button">
-										test4
+										전처리 과정 (4)
 										</button>
 									</div>
 									<div class="input-group-append">
 										<button class="btn btn-primary" type="button">
-										test5
+										전처리 과정 (5)
 										</button>
 									</div>
 								</div>
@@ -205,7 +221,7 @@
 						
 						<div id="result">						
 							<div id="lottie" align="center">
-								<lottie-player src="https://assets8.lottiefiles.com/packages/lf20_qp1q7mct.json" background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>							
+								<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_mbrocy0r.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop  autoplay></lottie-player>							
 							</div>
 						</div>
 						<div id="modelButton" name="modelButton"></div>

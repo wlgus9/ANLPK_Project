@@ -1,7 +1,8 @@
-function barChart(dateValue, modelKey, modelValue, wordValue) {
-	document.getElementById("dateValue").innerHTML = "<b>" + dateValue[0] + " ~ " + dateValue[1] + "</b>";
+function barChart(cate, dateValue, modelKey, modelValue, wordValue) {
+	document.getElementById("dateValue").innerHTML = "<b>" + cate[0] + " 분야의 " + cate[1] + " 기사</b><br>" + "<b>" + dateValue[0] + " ~ " + dateValue[1] + "</b>";
 
-	console.log(wordValue.length);
+	console.log(cate[0]);
+	console.log(cate[1]);
 	
 	if(wordValue.length==0) {
 		document.getElementById("wordValue").innerHTML = "<b>추출된 신조어가 없습니다.<b>";
