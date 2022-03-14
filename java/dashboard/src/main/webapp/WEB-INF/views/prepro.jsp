@@ -15,7 +15,7 @@
 
 <script>
 				function prepro(newsUrl) {
-			
+
 					req_url = "http://localhost:5000/url_test/" + newsUrl;
 					var form = $("form")[0];
 					var form_data = new FormData(form);
@@ -29,13 +29,14 @@
 						success : function(data) {
 							// ----------------- 전처리 파트 JSON ----------------- 
 							
-							console.log(data);							
+							console.log(data);	
 							var prepro = new Array();
 							
 							$.each(data, function(key, value) {
 								prepro.push(value);
 							});
 							
+							$("#result").empty();
 							$("#result").append(prepro[0]);
 							$("#result").append("<hr>");
 							
@@ -48,8 +49,10 @@
 											$("#result").append(prepro[x-1]);
 											$("#result").append("<hr>");
 											
-											if(x==prepro.length) {												
-												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling()></input>");
+											if(x==prepro.length) {
+												$("#modelButton").append("<input class='btn btn-primary' type='button' value='모델링' id='modeling' onclick=modeling(" + 'newsUrl' + ")>");
+												$("#modelButton").append("<input type='hidden' id='newsUrl' value='" + newsUrl + "'>");
+
 											}
 											
 										}, 3000 * (x-y));
@@ -72,11 +75,12 @@
 <script>
 
 		function modeling() {
+			var newsUrl = document.getElementById('newsUrl').value;
 			
 			$("#result").empty();
 			$("#modelButton").empty();
 			
-			req_url = "http://localhost:5000/url_test2";
+			req_url = "http://localhost:5000/url_test2/" + newsUrl;
 			var form = $("form")[0];
 			var form_data = new FormData(form);
 			$.ajax({
@@ -212,7 +216,9 @@
 						<div id="result">						
 
 						</div>
-						<div id="modelButton" name="modelButton"></div>
+						<div id="modelButton" name="modelButton">
+							
+						</div>
 						<div style="width:100%;">
 							<div id="lottie" align="center">
 								<lottie-player src="https://assets2.lottiefiles.com/packages/lf20_mbrocy0r.json"  background="transparent"  speed="1"  style="width: 500px; height: 500px;"  loop  autoplay></lottie-player>							
