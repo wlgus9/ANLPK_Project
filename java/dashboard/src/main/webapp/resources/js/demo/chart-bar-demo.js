@@ -1,19 +1,18 @@
 function barChart(cate, dateValue, modelKey, modelValue, wordValue) {
-	document.getElementById("dateValue").innerHTML = "<b>" + cate[0] + " 분야의 " + cate[1] + " 기사</b><br>" + "<b>" + dateValue[0] + " ~ " + dateValue[1] + "</b>";
-
-	console.log(cate[0]);
-	console.log(cate[1]);
+	document.getElementById("dateValue").innerHTML = "<b>" + cate[0] + " 분야의 " + cate[1] + " 기사 (총 " + modelValue[0] + "개)</b><br>" + "<b>" + dateValue[0] + " ~ " + dateValue[1] + "</b>";
+	
+	modelValue.shift();
 	
 	if(wordValue.length==0) {
 		document.getElementById("wordValue").innerHTML = "<b>추출된 신조어가 없습니다.<b>";
 	} else {
 		for(i=0; i<wordValue.length; i++) {
 			if(i==wordValue.length-1) {
-				var a = "<b>" + wordValue[i] + "</b>";
+				var a = "<b> 추출된 최종 신조어 : " + wordValue[i] + "</b>";
 				var b = document.getElementById("wordValue");
 				b.innerHTML = b.innerHTML + a;
 			} else {
-				var a = "<b>" + wordValue[i] + "</b>" + ", ";
+				var a = "<b> 추출된 최종 신조어 : " + wordValue[i] + "</b>" + ", ";
 				var b = document.getElementById("wordValue");
 				b.innerHTML = b.innerHTML + a;
 			}		

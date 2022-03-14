@@ -125,8 +125,8 @@
 						modelValue.push(value);
 					});
 					
-					for(i=0; i<modelValue[11].length; i++) {
-						wordValue.push(modelValue[11][i]);
+					for(i=0; i<modelValue[13].length; i++) {
+						wordValue.push(modelValue[13][i]);
 					}
 					
 					cate.push(modelValue.shift());
